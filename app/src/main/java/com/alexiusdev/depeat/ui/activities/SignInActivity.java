@@ -48,8 +48,10 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.signin_btn){
-            //TODO add user to DB if not present
+        switch(view.getId()){
+            case (R.id.signin_btn):
+                //TODO add user to DB if not present
+                break;
         }
     }
 

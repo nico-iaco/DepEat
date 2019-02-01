@@ -30,9 +30,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.login_menu){
-            startActivity(new Intent(this, LoginActivity.class));
-            return true;
+        switch(item.getItemId()) {
+            case (R.id.login_menu):
+                startActivity(new Intent(this, LoginActivity.class));
+                return true;
+            case (R.id.cart_menu):
+                startActivity(new Intent(this, CartActivity.class));
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

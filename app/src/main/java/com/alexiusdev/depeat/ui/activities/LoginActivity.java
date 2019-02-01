@@ -7,6 +7,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +21,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     Button loginBtn;
     Button signinBtn;
+    Button forgotPasswordBtn;
     EditText emailET;
     EditText passwordET;
     TextView creditsTV;
@@ -32,6 +36,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         loginBtn = findViewById(R.id.login_btn);
         signinBtn = findViewById(R.id.signin_btn);
+        forgotPasswordBtn = findViewById(R.id.forgot_password_btn);
         emailET = findViewById(R.id.email_et);
         passwordET = findViewById(R.id.password_et);
         creditsTV = findViewById(R.id.credits_tv);
@@ -50,9 +55,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         switch(view.getId()){
             case R.id.login_btn:
-                //TODO login
-                showToast(this, getString(R.string.login_successful));
-                startActivity(new Intent(this, MainActivity.class));
+                if(doLogin(emailET.getText().toString(),passwordET.getText().toString())) {
+                    showToast(this, getString(R.string.login_successful));
+                    startActivity(new Intent(this, MainActivity.class));
+                }else {
+                    passwordET.setText("");
+                    showToast(this,getString(R.string.wrong_password));
+                    forgotPasswordBtn.setVisibility(View.VISIBLE);
+                    //TODO implement some way to recover password
+                }
                 break;
             case R.id.signin_btn:
                 startActivity(new Intent(LoginActivity.this, SignInActivity.class).putExtra(MAIL_KEY,emailET.getText().toString()));
@@ -64,6 +75,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 //TODO implement a changelog?
                 break;
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_login, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case (R.id.quit_menu):
+                finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private TextWatcher loginButtonTextWatcher = new TextWatcher() {
@@ -78,5 +107,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     };
 
-
+    private boolean doLogin(String mail, String password){
+        return password.equals("qwerty");   //just for testing purposes
+    }
 }

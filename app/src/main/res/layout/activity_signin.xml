@@ -18,7 +18,8 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/name"/>
+                    android:text="@string/name"
+                    android:textColor="@color/primary_text"/>
                 <EditText
                     android:id="@+id/name_et"
                     android:layout_width="match_parent"
@@ -35,7 +36,8 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/surname"/>
+                    android:text="@string/surname"
+                    android:textColor="@color/primary_text"/>
                 <EditText
                     android:id="@+id/surname_et"
                     android:layout_width="match_parent"
@@ -53,7 +55,8 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/email"/>
+                    android:text="@string/email"
+                    android:textColor="@color/primary_text"/>
                 <EditText
                     android:id="@+id/email_et"
                     android:layout_width="match_parent"
@@ -71,7 +74,8 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/password"/>
+                    android:text="@string/password"
+                    android:textColor="@color/primary_text"/>
                 <EditText
                     android:id="@+id/password_et"
                     android:layout_width="match_parent"
@@ -88,7 +92,8 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/password_confirm"/>
+                    android:text="@string/password_confirm"
+                    android:textColor="@color/primary_text"/>
                 <EditText
                     android:id="@+id/confirm_password_et"
                     android:layout_width="match_parent"
