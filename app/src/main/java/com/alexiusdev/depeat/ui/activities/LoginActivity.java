@@ -3,10 +3,12 @@ package com.alexiusdev.depeat.ui.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,24 +17,32 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.alexiusdev.depeat.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import static com.alexiusdev.depeat.Utility.*;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button loginBtn;
-    Button signinBtn;
-    Button forgotPasswordBtn;
-    EditText emailET;
-    EditText passwordET;
-    TextView creditsTV;
-    TextView versionTV;
+    private Button loginBtn;
+    private Button signinBtn;
+    private Button forgotPasswordBtn;
+    private EditText emailET;
+    private EditText passwordET;
+    private TextView creditsTV;
+    private TextView versionTV;
+    private FirebaseAuth mAuth;
+    FirebaseUser currentUser;
     public static final int MIN_LENGTH_PSW = 6;
-    public static final String MAIL_KEY = "email";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        mAuth = FirebaseAuth.getInstance();
 
         loginBtn = findViewById(R.id.login_btn);
         signinBtn = findViewById(R.id.signin_btn);
@@ -46,33 +56,47 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         signinBtn.setOnClickListener(this);
         creditsTV.setOnClickListener(this);
         versionTV.setOnClickListener(this);
+        forgotPasswordBtn.setOnClickListener(this);
 
         emailET.addTextChangedListener(loginButtonTextWatcher);
         passwordET.addTextChangedListener(loginButtonTextWatcher);
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        currentUser = mAuth.getCurrentUser();
+        if (currentUser != null){
+            startActivity(new Intent(this, MainActivity.class));
+        }
+    }
+
+    @Override
     public void onClick(View view) {
         switch(view.getId()){
             case R.id.login_btn:
-                if(doLogin(emailET.getText().toString(),passwordET.getText().toString())) {
-                    showToast(this, getString(R.string.login_successful));
-                    startActivity(new Intent(this, MainActivity.class));
-                }else {
-                    passwordET.setText("");
-                    showToast(this,getString(R.string.wrong_password));
-                    forgotPasswordBtn.setVisibility(View.VISIBLE);
-                    //TODO implement some way to recover password
-                }
+                login(emailET.getText().toString(),passwordET.getText().toString());
                 break;
             case R.id.signin_btn:
-                startActivity(new Intent(LoginActivity.this, SignInActivity.class).putExtra(MAIL_KEY,emailET.getText().toString()));
+                startActivity(new Intent(LoginActivity.this, SignInActivity.class).putExtra(EMAIL_KEY,emailET.getText().toString()));
                 break;
             case R.id.credits_tv:
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Alexius33/")));
                 break;
             case R.id.version_tv:
                 //TODO implement a changelog?
+                break;
+            case R.id.forgot_password_btn:
+                mAuth.sendPasswordResetEmail(emailET.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>(){
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task){
+                        if(task.isSuccessful())
+                            showToast(LoginActivity.this,getString(R.string.forgot_password_toast));
+                        else
+                            showToast(LoginActivity.this,getString(R.string.error));
+                    }
+                });
                 break;
         }
     }
@@ -107,7 +131,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     };
 
-    private boolean doLogin(String mail, String password){
-        return password.equals("qwerty");   //just for testing purposes
+    private void login(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("TAG", "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            startActivity(new Intent(LoginActivity.this,MainActivity.class).putExtra(EMAIL_KEY,user.getEmail()));
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            passwordET.setText("");
+                            showToast(LoginActivity.this, getString(R.string.wrong_password));
+                            forgotPasswordBtn.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
     }
 }

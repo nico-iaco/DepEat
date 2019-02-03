@@ -5,6 +5,7 @@ import android.util.Patterns;
 import android.widget.Toast;
 
 public class Utility {
+    public static final String EMAIL_KEY = "email";
 
     public static boolean isValidEmail(String emailStr) {
         return Patterns.EMAIL_ADDRESS.matcher(emailStr).matches();

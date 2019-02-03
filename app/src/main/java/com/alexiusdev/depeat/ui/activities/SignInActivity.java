@@ -1,30 +1,42 @@
 package com.alexiusdev.depeat.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.EditText;;
+
 import com.alexiusdev.depeat.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import static com.alexiusdev.depeat.Utility.*;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener{
 
-    EditText nameET;
-    EditText surnameET;
-    EditText emailET;
-    EditText passwordET;
-    EditText confirmPasswordET;
-    Button signInBtn;
+    private EditText nameET;
+    private EditText surnameET;
+    private EditText emailET;
+    private EditText passwordET;
+    private EditText confirmPasswordET;
+    private Button signInBtn;
+    private FirebaseAuth mAuth;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
+        mAuth = FirebaseAuth.getInstance();
 
         nameET = findViewById(R.id.name_et);
         surnameET = findViewById(R.id.surname_et);
@@ -41,19 +53,19 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         passwordET.addTextChangedListener(signInButtonTextWatcher);
         confirmPasswordET.addTextChangedListener(signInButtonTextWatcher);
 
-        if(isValidEmail(getIntent().getStringExtra(LoginActivity.MAIL_KEY)))
-            emailET.setText(getIntent().getStringExtra(LoginActivity.MAIL_KEY));
+        if(isValidEmail(getIntent().getStringExtra(EMAIL_KEY)))
+            emailET.setText(getIntent().getStringExtra(EMAIL_KEY));
     }
-
 
     @Override
     public void onClick(View view) {
         switch(view.getId()){
             case (R.id.signin_btn):
-                //TODO add user to DB if not present
+                createAccount(emailET.getText().toString(),passwordET.getText().toString());
                 break;
         }
     }
+
 
     private TextWatcher signInButtonTextWatcher = new TextWatcher() {
         @Override
@@ -69,4 +81,27 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                     !surnameET.getText().toString().isEmpty());    //surname isn't empty
         }
     };
+
+
+
+
+
+    private void createAccount(String email, String password){
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("TAG", "createUserWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            startActivity(new Intent(SignInActivity.this,LoginActivity.class));
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w("TAG", "createUserWithEmail:failure", task.getException());
+                            showToast(SignInActivity.this, "Authentication failed.");
+                        }
+                    }
+                });
+    }
 }

@@ -26,4 +26,9 @@
     <string name="quit">Quit</string>
     <string name="forgot_password">Forgot password?</string>
     <string name="wrong_password">Wrong password</string>
+    <string name="welcome">Welcome</string>
+    <string name="login_required">Please login first</string>
+    <string name="user_logged_out">User logged out</string>
+    <string name="forgot_password_toast">An email has been sent to you</string>
+    <string name="error">Ops, something went wrong</string>
 </resources>
