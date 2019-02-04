@@ -1,6 +1,6 @@
 /build
-google-services.json
+*.json
 *.apk
 *.class
 bin/
-.gradle/
+.gradle

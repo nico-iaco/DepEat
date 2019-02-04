@@ -1,10 +1,12 @@
-package com.alexiusdev.depeat;
+package com.alexiusdev.depeat.ui;
 
 public class User {
+    private String email;
     private String name;
     private String surname;
 
-    public User(String name, String surname) {
+    public User(String email, String name, String surname) {
+        this.email = email;
         this.name = name;
         this.surname = surname;
     }
@@ -19,6 +21,14 @@ public class User {
 
     public String getSurname() {
         return surname;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setSurname(String surname) {

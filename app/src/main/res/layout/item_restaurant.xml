@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/logo_iv"
+        android:src="@mipmap/ic_launcher"/>
+
+        <TextView
+            android:id="@+id/name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NAME"
+            android:layout_toRightOf="@id/logo_iv"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="-3dp"/>
+        <TextView
+            android:id="@+id/address_tv"
+            android:layout_below="@id/name_tv"
+            android:layout_toRightOf="@id/logo_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ADDRESS"
+            android:layout_alignLeft="@id/name_tv"/>
+        <TextView
+            android:id="@+id/min_order_tv"
+            android:layout_below="@id/address_tv"
+            android:layout_toRightOf="@id/logo_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MINORDER"
+            android:layout_alignLeft="@id/address_tv"/>
+        <TextView
+            android:id="@+id/rating_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4.8"
+            android:layout_below="@id/min_order_tv"
+            android:layout_alignLeft="@id/min_order_tv"/>
+        <RatingBar
+            android:id="@+id/rating_stars"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/min_order_tv"
+            android:layout_toRightOf="@id/rating_number"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="1dp"
+            android:numStars="5"
+            android:stepSize="0.1"
+            style="?android:attr/ratingBarStyleSmall"
+            android:isIndicator="true"/>
+
+</RelativeLayout>

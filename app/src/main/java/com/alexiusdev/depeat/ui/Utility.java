@@ -1,4 +1,4 @@
-package com.alexiusdev.depeat;
+package com.alexiusdev.depeat.ui;
 
 import android.content.Context;
 import android.util.Patterns;

@@ -2,19 +2,23 @@ package com.alexiusdev.depeat.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 
 import com.alexiusdev.depeat.R;
+import com.alexiusdev.depeat.ui.adapters.RestaurantAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import static com.alexiusdev.depeat.Utility.*;
+import java.util.ArrayList;
+
+import static com.alexiusdev.depeat.ui.Utility.*;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -22,6 +26,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private MenuItem loginMenuItem;
     private FirebaseAuth mAuth;
     FirebaseUser currentUser;
+    RecyclerView restaurantRV;
+    ArrayList<String> restaurantList;
 
 
     @Override
@@ -29,11 +35,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        restaurantRV = findViewById(R.id.places_rv);
+
+        restaurantRV.setLayoutManager(new LinearLayoutManager(this));
+        restaurantRV.setAdapter(new RestaurantAdapter(this,getData()));
 
         mAuth = FirebaseAuth.getInstance();
 
         if(getIntent().getExtras() != null)
             showToast(this, getString(R.string.welcome) + " " + getIntent().getExtras().getString(EMAIL_KEY));
+
     }
 
     @Override
@@ -86,5 +97,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
 
+    }
+
+    private ArrayList<String> getData(){
+        restaurantList = new ArrayList<>();
+        restaurantList.add("KFC");
+        restaurantList.add("Burger King");
+        restaurantList.add("McDonald");
+        return restaurantList;
     }
 }

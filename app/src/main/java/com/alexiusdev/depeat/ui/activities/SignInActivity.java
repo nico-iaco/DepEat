@@ -2,9 +2,9 @@ package com.alexiusdev.depeat.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -13,13 +13,14 @@ import android.widget.Button;
 import android.widget.EditText;;
 
 import com.alexiusdev.depeat.R;
+import com.alexiusdev.depeat.ui.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import static com.alexiusdev.depeat.Utility.*;
+import static com.alexiusdev.depeat.ui.Utility.*;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -30,7 +31,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private EditText confirmPasswordET;
     private Button signInBtn;
     private FirebaseAuth mAuth;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,7 +86,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
 
 
-    private void createAccount(String email, String password){
+    private void createAccount(final String email, final String password){
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -96,6 +96,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                             Log.d("TAG", "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             startActivity(new Intent(SignInActivity.this,LoginActivity.class));
+                            new User(email, nameET.getText().toString(),surnameET.getText().toString());
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("TAG", "createUserWithEmail:failure", task.getException());
