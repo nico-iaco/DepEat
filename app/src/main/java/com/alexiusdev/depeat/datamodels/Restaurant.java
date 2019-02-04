@@ -1,10 +1,17 @@
 package com.alexiusdev.depeat.datamodels;
 
 public class Restaurant {
-    private float minOrder = 8F;
+    private float minOrder;
     private String name;
-    private int stars;
+    private int rating;
     private String address;
+
+    public Restaurant(float minOrder, String name, int rating, String address) {
+        this.minOrder = minOrder;
+        this.name = name;
+        this.rating = rating;
+        this.address = address;
+    }
 
     public void setMinOrder(float minOrder) {
         this.minOrder = minOrder;
@@ -18,12 +25,16 @@ public class Restaurant {
         this.name = name;
     }
 
-    public int getStars() {
-        return stars;
+    public Float getRatingFloat() {
+        return rating/10F;
     }
 
-    public void setStars(int stars) {
-        this.stars = stars;
+    public int getRatingInt() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 
     public String getAddress() {
@@ -34,7 +45,7 @@ public class Restaurant {
         this.address = address;
     }
 
-    public float getMinOrder() {
+    public Float getMinOrder() {
         return minOrder;
     }
 }

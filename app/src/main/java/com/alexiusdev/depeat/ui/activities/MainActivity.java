@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.alexiusdev.depeat.R;
+import com.alexiusdev.depeat.datamodels.Restaurant;
 import com.alexiusdev.depeat.ui.adapters.RestaurantAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FirebaseAuth mAuth;
     FirebaseUser currentUser;
     RecyclerView restaurantRV;
-    ArrayList<String> restaurantList;
+    ArrayList<Restaurant> restaurantList;
 
 
     @Override
@@ -99,11 +100,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private ArrayList<String> getData(){
+    private ArrayList<Restaurant> getData(){
         restaurantList = new ArrayList<>();
-        restaurantList.add("KFC");
-        restaurantList.add("Burger King");
-        restaurantList.add("McDonald");
+        restaurantList.add(new Restaurant(5.6F,"KFC",29,"via dei Tulipani, 7"));
+        restaurantList.add(new Restaurant(8.2F,"McDonald",35,"via dei Girasoli, 147"));
+        restaurantList.add(new Restaurant(5.6F,"Burger King",43,"via dei Gerani, 36"));
         return restaurantList;
     }
 }
