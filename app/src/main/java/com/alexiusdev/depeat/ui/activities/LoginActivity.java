@@ -113,6 +113,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         switch(item.getItemId()){
             case (R.id.quit_menu):
                 finish();
+                System.exit(0);
                 return true;
         }
 

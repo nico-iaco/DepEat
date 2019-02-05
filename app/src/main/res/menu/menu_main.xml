@@ -2,6 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/grid_menu"
+        android:title="@string/login"
+        android:visible="false"
+        android:icon="@drawable/outline_grid_on_white_24"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/card_menu"
+        android:title="@string/login"
+        android:visible="false"
+        android:icon="@drawable/outline_view_agenda_white_24"
+        app:showAsAction="ifRoom"/>
+    <item
         android:title="@string/cart"
         android:id="@+id/cart_menu"
         android:icon="@drawable/sharp_shopping_cart_white_24"

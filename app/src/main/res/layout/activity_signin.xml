@@ -121,6 +121,7 @@
             android:layout_height="wrap_content"
             android:text="@string/sign_in"
             android:enabled="false"
-            android:visibility="visible"/>
+            android:visibility="visible"
+            style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"/>
     </LinearLayout>
 </LinearLayout>

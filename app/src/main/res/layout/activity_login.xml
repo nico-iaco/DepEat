@@ -78,13 +78,15 @@
                     android:layout_height="wrap_content"
                     android:text="@string/login"
                     android:layout_weight="1"
-                    android:enabled="false"/>
+                    android:enabled="false"
+                    style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"/>
                 <Button
                     android:id="@+id/signin_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/sign_in"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"/>
             </LinearLayout>
             <Button
                 android:id="@+id/forgot_password_btn"

@@ -28,6 +28,9 @@
         <activity
             android:name=".ui.activities.CartActivity"
             android:label="@string/cart"/>
+        <activity
+            android:name=".ui.activities.MenuActivity"
+            android:label="@string/menu"/>
 
 
     </application>
