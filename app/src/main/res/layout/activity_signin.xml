@@ -122,6 +122,7 @@
             android:text="@string/sign_in"
             android:enabled="false"
             android:visibility="visible"
+            android:textColor="@color/primary_text"
             style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"/>
     </LinearLayout>
 </LinearLayout>

@@ -27,13 +27,9 @@ import static com.alexiusdev.depeat.ui.Utility.*;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button loginBtn;
-    private Button signinBtn;
-    private Button forgotPasswordBtn;
-    private EditText emailET;
-    private EditText passwordET;
-    private TextView creditsTV;
-    private TextView versionTV;
+    private Button loginBtn, signinBtn, forgotPasswordBtn;
+    private EditText emailET, passwordET;
+    private TextView creditsTV, versionTV;
     private FirebaseAuth mAuth;
     FirebaseUser currentUser;
     public static final int MIN_LENGTH_PSW = 6;

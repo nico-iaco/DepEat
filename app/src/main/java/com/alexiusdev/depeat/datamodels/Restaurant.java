@@ -1,16 +1,22 @@
 package com.alexiusdev.depeat.datamodels;
 
-public class Restaurant {
-    private float minOrder;
-    private String name;
-    private int rating;
-    private String address;
+import java.util.ArrayList;
 
-    public Restaurant(float minOrder, String name, int rating, String address) {
-        this.minOrder = minOrder;
+public class Restaurant {
+    private String name, address, description, imageUrl;
+    private int rating;
+    private float minOrder;
+    private ArrayList<Product> products;
+
+    public Restaurant(String name, String address, String description, String imageUrl, int rating, float minOrder/*, ArrayList<Product> products*/) {
         this.name = name;
-        this.rating = rating;
         this.address = address;
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.rating = rating;
+        this.minOrder = minOrder;
+        //this.products = products;
+        products = new ArrayList<>();
     }
 
     public void setMinOrder(float minOrder) {
@@ -45,7 +51,35 @@ public class Restaurant {
         this.address = address;
     }
 
-    public Float getMinOrder() {
+    public float getMinOrder() {
         return minOrder;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public ArrayList<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(ArrayList<Product> products) {
+        this.products = products;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

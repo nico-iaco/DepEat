@@ -19,7 +19,7 @@
          android:layout_marginLeft="8dp"
          android:layout_marginTop="-4dp"/>
     <TextView
-        android:id="@+id/address_tv"
+        android:id="@+id/restaurant_address_tv"
         android:layout_below="@id/name_tv"
         android:layout_toRightOf="@id/logo_iv"
         android:layout_width="wrap_content"
@@ -28,18 +28,18 @@
         android:layout_alignLeft="@id/name_tv"/>
     <TextView
         android:id="@+id/min_checkout_tv"
-        android:layout_below="@id/address_tv"
+        android:layout_below="@id/restaurant_address_tv"
         android:layout_toRightOf="@id/logo_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/min_checkout"
-        android:layout_alignLeft="@id/address_tv"/>
+        android:layout_alignLeft="@id/restaurant_address_tv"/>
     <TextView
         android:id="@+id/min_checkout_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/min_checkout_tv"
-        android:layout_below="@id/address_tv"
+        android:layout_below="@id/restaurant_address_tv"
         android:layout_marginLeft="2dp"
         android:text="€3.2"/>
     <TextView

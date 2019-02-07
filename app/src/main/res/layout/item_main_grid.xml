@@ -8,10 +8,11 @@
     android:layout_marginLeft="@dimen/mtrl_card_spacing"
     android:layout_marginTop="@dimen/mtrl_card_spacing"
     android:layout_marginRight="@dimen/mtrl_card_spacing"
-    app:cardCornerRadius="1dp"
+    style="@style/CornerRadius"
     android:id="@+id/restaurant_card"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,7 +33,7 @@
             android:layout_marginTop="4dp"
             android:text="NAME"/>
         <TextView
-            android:id="@+id/address_tv"
+            android:id="@+id/restaurant_address_tv"
             android:layout_width="wrap_content"
             android:textColor="@color/secondary_text"
             android:layout_height="wrap_content"

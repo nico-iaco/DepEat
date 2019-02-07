@@ -43,7 +43,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter {
         RestaurantViewHolder restaurantViewHolder = (RestaurantViewHolder) viewHolder;
         restaurantViewHolder.restaurantNameTV.setText(data.get(index).getName());
         restaurantViewHolder.restaurantAddressTV.setText(data.get(index).getAddress());
-        restaurantViewHolder.restaurantMinCheckoutValueTV.append(data.get(index).getMinOrder().toString());
+        restaurantViewHolder.restaurantMinCheckoutValueTV.append(String.valueOf(data.get(index).getMinOrder()));
         restaurantViewHolder.restaurantRatingTV.setText(String.format(Locale.getDefault(),"%.1f", data.get(index).getRatingFloat()));
         restaurantViewHolder.ratingBar.setProgress(data.get(index).getRatingInt());
     }
@@ -54,17 +54,14 @@ public class RestaurantAdapter extends RecyclerView.Adapter {
     }
 
     public class RestaurantViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        public TextView restaurantNameTV;
-        public TextView restaurantAddressTV;
-        public TextView restaurantMinCheckoutValueTV;
-        public TextView restaurantRatingTV;
+        public TextView restaurantNameTV, restaurantAddressTV, restaurantMinCheckoutValueTV, restaurantRatingTV;
         public RatingBar ratingBar;
         public MaterialCardView restaurantCard;
 
         public RestaurantViewHolder(@NonNull View itemView) {
             super(itemView);
             restaurantNameTV = itemView.findViewById(R.id.name_tv);
-            restaurantAddressTV = itemView.findViewById(R.id.address_tv);
+            restaurantAddressTV = itemView.findViewById(R.id.restaurant_address_tv);
             restaurantMinCheckoutValueTV = itemView.findViewById(R.id.min_checkout_value);
             restaurantRatingTV = itemView.findViewById(R.id.rating_number_tv);
             ratingBar = itemView.findViewById(R.id.rating_stars);

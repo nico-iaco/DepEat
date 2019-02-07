@@ -4,10 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.alexiusdev.depeat.R;
+import com.alexiusdev.depeat.datamodels.Product;
 import com.alexiusdev.depeat.datamodels.Restaurant;
 import com.alexiusdev.depeat.ui.adapters.RestaurantAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -126,19 +126,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private ArrayList<Restaurant> getData(){
         restaurantList = new ArrayList<>();
-        restaurantList.add(new Restaurant(3.7F,"KFC",29,"via dei Tulipani, 7"));
-        restaurantList.add(new Restaurant(8.2F,"McDonald",35,"via dei Girasoli, 147"));
-        restaurantList.add(new Restaurant(5.6F,"Burger King",24,"via dei Gerani, 36"));
-        restaurantList.add(new Restaurant(4.2F,"Makkitella Food",28,"via dei Lambruschi, 31"));
-        restaurantList.add(new Restaurant(1.2F,"567",50,"via delle Camelie, 287"));
-        restaurantList.add(new Restaurant(4.5F,"Subway",17,"via dei Narcisi, 75"));
+        restaurantList.add(new Restaurant("KFC","via dei Tulipani, 7","DESCRIPTION","URL",42,4.3F));
+        restaurantList.add(new Restaurant("McDonald","via dei Girasoli, 147","DESCRIPTION","URL",35,4.3F));
+        restaurantList.add(new Restaurant("Burger King","via dei Gerani, 36","DESCRIPTION","URL",22,4.3F));
+        restaurantList.add(new Restaurant("Makkitella Food","via dei Lambruschi, 31","DESCRIPTION","URL",42,4.3F));
+        restaurantList.add(new Restaurant("567","via delle Camelie, 287","DESCRIPTION","URL",37,4.3F));
+        restaurantList.add(new Restaurant("Subway","via dei Narcisi, 75","DESCRIPTION","URL",14,4.3F));
         return restaurantList;
     }
 
     private void setLayoutManager(){
-        layoutManager = adapter.isGridMode() ? new LinearLayoutManager(this) : new GridLayoutManager(this,2);
+        layoutManager = adapter.isGridMode() ? new LinearLayoutManager(this) : new StaggeredGridLayoutManager(2,1);
         adapter.setGridMode(!adapter.isGridMode());
         restaurantRV.setLayoutManager(layoutManager);
         restaurantRV.setAdapter(adapter);
+    }
+    private ArrayList<Product> getProducts(){
+        ArrayList<Product> products = new ArrayList<>();
+        products.add(new Product("hamburger", 2,2.6F));
+        return products;
     }
 }
