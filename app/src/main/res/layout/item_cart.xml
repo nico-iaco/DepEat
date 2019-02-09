@@ -33,16 +33,16 @@
             android:textColor="@color/primary_text" />
         <ImageView
             android:id="@+id/minus_iv"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/quantity_tv"
+            android:layout_toLeftOf="@id/quantity_et"
             android:layout_marginRight="5dp"
             android:src="@drawable/ic_remove_black_24dp"
             android:clickable="true"
             android:focusable="true"/>
-        <TextView
-            android:id="@+id/quantity_tv"
+        <EditText
+            android:id="@+id/quantity_et"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -52,12 +52,17 @@
             android:textColor="@color/primary_text"
             android:textSize="20sp"
             android:clickable="true"
-            android:focusable="true"/>
+            android:focusable="true"
+            android:lines="1"
+            android:inputType="number"
+            android:minWidth="12dp"
+            android:maxWidth="24dp"
+            android:background="#00000000"/>
 
         <ImageView
             android:id="@+id/plus_iv"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="15dp"

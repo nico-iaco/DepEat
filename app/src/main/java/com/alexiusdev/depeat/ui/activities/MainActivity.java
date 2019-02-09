@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_cardview);
+        setContentView(R.layout.activity_main);
 
         restaurantRV = findViewById(R.id.restaurant_rv);
         restaurantRV.setLayoutManager(new LinearLayoutManager(this));

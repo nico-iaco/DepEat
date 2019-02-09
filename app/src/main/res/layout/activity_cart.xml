@@ -112,6 +112,7 @@
             android:text="@string/checkout"
             android:textAlignment="center"
             style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
-            android:textColor="@color/primary_text"/>
+            android:textColor="@color/secondary_text"
+            android:enabled="false"/>
     </LinearLayout>
 </RelativeLayout>

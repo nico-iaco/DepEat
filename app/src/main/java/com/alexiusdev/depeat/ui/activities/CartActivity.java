@@ -1,7 +1,8 @@
 package com.alexiusdev.depeat.ui.activities;
 
 import android.content.Intent;
-import com.bumptech.glide.Glide;
+
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,9 +27,9 @@ import java.util.Locale;
 
 import static com.alexiusdev.depeat.ui.Utility.*;
 
-public class CartActivity extends AppCompatActivity implements View.OnClickListener, ProductAdapter.OnQuanityChangedListener{
+public class CartActivity extends AppCompatActivity implements View.OnClickListener, ProductAdapter.OnQuantityChangedListener, ProductAdapter.OnQuantitySettedListener {
 
-    private Button checkout_btn;
+    private Button checkoutBtn;
     private FirebaseAuth mAuth;
     FirebaseUser currentUser;
 
@@ -51,7 +52,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_cart);
 
         mAuth = FirebaseAuth.getInstance();
-        checkout_btn = findViewById(R.id.checkout_btn);
+        checkoutBtn = findViewById(R.id.checkout_btn);
         progressBar = findViewById(R.id.progressbar);
         restaurantNameTv = findViewById(R.id.restaurant_name_tv);
         restaurantAddressTv = findViewById(R.id.restaurant_address_tv);
@@ -61,7 +62,8 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         restaurantIv = findViewById(R.id.restaurant_iv);
         productRv = findViewById(R.id.product_rv);
 
-        checkout_btn.setOnClickListener(this);
+        checkoutBtn.setOnClickListener(this);
+        mapsIv.setOnClickListener(this);
 
         restaurant = getRestaurant();
 
@@ -72,13 +74,19 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
         layoutManager = new LinearLayoutManager(this);
         adapter = new ProductAdapter(this, restaurant.getProducts());
-        adapter.setOnQuanityChangedListener(this);
+        adapter.setOnQuantityChangedListener(this);
+        adapter.setOnQuantitySettedListener(this);
 
         productRv.setAdapter(adapter);
         productRv.setLayoutManager(layoutManager);
 
         minCheckoutTv.setText(getString(R.string.currency).concat(String.format(Locale.getDefault(),"%.2f",restaurant.getMinOrder())));
-        onChange(0F);
+
+        //initialise stuff at 0
+        progressBar.setProgress(0);
+
+        totalPriceTv.setText(getString(R.string.currency).concat(String.format(Locale.getDefault(),"%.2f",0F)));
+        //TODO set all the appropriate icons
     }
 
     @Override
@@ -95,7 +103,9 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                 if(currentUser == null) {
                     showToast(this, getString(R.string.login_required));
                     startActivity(new Intent(this, LoginActivity.class));
-                }
+                } break;
+            case (R.id.maps_iv):
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/search/?api=1&query=".concat(Uri.encode(restaurantAddressTv.getText().toString())))));
         }
     }
 
@@ -106,28 +116,44 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
     private ArrayList<Product> getProducts(){
         ArrayList<Product> products = new ArrayList<>();
-        products.add(new Product("hamburger", 1,2.6F));
-        products.add(new Product("hamburger", 1,2.6F));
-        products.add(new Product("hamburger", 1,2.6F));
-        products.add(new Product("hamburger", 1,2.6F));
-        products.add(new Product("hamburger", 1,2.6F));
-        products.add(new Product("hamburger", 1,2.6F));
-        products.add(new Product("hamburger", 1,2.6F));
+        products.add(new Product("hamburger", 0,2.6F));
+        products.add(new Product("hamburger", 0,1.2F));
+        products.add(new Product("hamburger", 0,0.6F));
+        products.add(new Product("hamburger", 0,5.5F));
+        products.add(new Product("hamburger", 0,3.6F));
+        products.add(new Product("hamburger", 0,4.0F));
+        products.add(new Product("hamburger", 0,1.9F));
         return products;
+    }
+
+    @Override
+    public void onChange(float price) {
+        updateTotal(price);
+    }
+
+    @Override
+    public void setPrice(float price) {
+        total += price;
+        updateUi(total);
     }
 
     private void updateTotal(float item){
         total += item;
+        updateUi(total);
+    }
+
+    private void updateUi(float total){
         totalPriceTv.setText(getString(R.string.currency).concat(String.format(Locale.getDefault(),"%.2f",total)));
+        enableCheckout(total);
+        updateProgress((int)total*100);
     }
 
     private void updateProgress(int progress){
         progressBar.setProgress(progress);
     }
 
-    @Override
-    public void onChange(float price) {
-        updateTotal(price);
-        updateProgress((int)total*100);
+    public void enableCheckout(float total){
+        checkoutBtn.setEnabled(total >= restaurant.getMinOrder());
+        checkoutBtn.setTextColor(total >= restaurant.getMinOrder() ? getResources().getColor(R.color.primary_text) : getResources().getColor(R.color.secondary_text));
     }
 }

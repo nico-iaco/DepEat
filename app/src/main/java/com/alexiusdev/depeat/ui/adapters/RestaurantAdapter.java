@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.alexiusdev.depeat.R;
 import com.alexiusdev.depeat.datamodels.Restaurant;
-import com.alexiusdev.depeat.ui.activities.MenuActivity;
+import com.alexiusdev.depeat.ui.activities.CartActivity;
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
@@ -73,7 +73,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter {
         @Override
         public void onClick(View view) {
             if (view.getId() == restaurantCard.getId()){
-                context.startActivity(new Intent(context, MenuActivity.class));
+                context.startActivity(new Intent(context, CartActivity.class));
             }
         }
     }

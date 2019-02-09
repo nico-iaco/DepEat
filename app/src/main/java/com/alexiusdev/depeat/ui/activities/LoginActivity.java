@@ -125,6 +125,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         public void afterTextChanged(Editable editable) {
             loginBtn.setEnabled(isValidEmail(emailET.getText().toString()) &&   //enable button only if the mail is valid and
                     passwordET.getText().toString().length() >= MIN_LENGTH_PSW);    //the password length is greater or equal to MIN_LENGTH_PSW
+            loginBtn.setTextColor(isValidEmail(emailET.getText().toString()) &&   //enable button only if the mail is valid and
+                    passwordET.getText().toString().length() >= MIN_LENGTH_PSW ?
+                    getResources().getColor(R.color.primary_text) : getResources().getColor(R.color.secondary_text));
         }
     };
 
