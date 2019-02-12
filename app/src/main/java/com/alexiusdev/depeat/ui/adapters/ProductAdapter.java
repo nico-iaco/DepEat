@@ -1,6 +1,7 @@
 package com.alexiusdev.depeat.ui.adapters;
 
 import android.content.Context;
+import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,7 +40,7 @@ public class ProductAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int index) {
+    public synchronized void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int index) {
         Product product = products.get(index);
         ProductViewHolder productViewHolder = (ProductViewHolder) viewHolder;
 
@@ -55,7 +56,7 @@ public class ProductAdapter extends RecyclerView.Adapter {
     }
 
     public interface OnQuantityChangedListener {
-        void onChange(float price);
+        void onChange(double price);
     }
 
     public OnQuantityChangedListener getOnQuantityChangedListener() {
@@ -67,12 +68,11 @@ public class ProductAdapter extends RecyclerView.Adapter {
     }
 
 
-    public class ProductViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, TextView.OnEditorActionListener {
+    public class ProductViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, TextView.OnEditorActionListener, View.OnFocusChangeListener {
         private TextView productName, productTotalPrice, productSinglePrice;
         private ImageView addBtn, removeBtn;
         private EditText productQty;
         private Product product;
-        private boolean hasFocus;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -88,49 +88,73 @@ public class ProductAdapter extends RecyclerView.Adapter {
             removeBtn.setOnClickListener(this);
             productQty.setImeOptions(EditorInfo.IME_ACTION_DONE);
             productQty.setOnEditorActionListener(this);
+            productQty.setOnFocusChangeListener(this);
         }
 
         @Override
-        public void onClick(View view) {
+        public synchronized void onClick(View view) {
             product = products.get(getAdapterPosition());
 
             if (view.getId() == R.id.plus_iv) {
                 product.increaseQuantity();
-                notifyItemChanged(getAdapterPosition());
                 onQuantityChangedListener.onChange(product.getPrice());
+                notifyItemChanged(getAdapterPosition());
             } else if (view.getId() == R.id.minus_iv) {
                 if (product.getQuantity() == 0) return;
                 product.decreaseQuantity();
-                notifyItemChanged(getAdapterPosition());
                 onQuantityChangedListener.onChange(product.getPrice() * -1);
+                notifyItemChanged(getAdapterPosition());
             }
         }
 
         @Override
-        public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+        public synchronized boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
             if (actionId == EditorInfo.IME_ACTION_DONE ) {
                 product = products.get(getAdapterPosition());
                 int newQty = Integer.parseInt(textView.getText().toString());
 
                 if (textView.getId() == productQty.getId()) {
-                    if (newQty > product.getQuantity()) {
-                        product.setQuantity(newQty);
-                        notifyItemChanged(getAdapterPosition());
-                        onQuantityChangedListener.onChange(product.getPrice() * product.getQuantity());
-                    } else if (newQty == 0) {
-                        notifyItemChanged(getAdapterPosition());
+                    if (newQty == 0) {
                         onQuantityChangedListener.onChange(-product.getPrice() * product.getQuantity());
                         product.setQuantity(newQty);
+                    } else if (newQty > product.getQuantity()) {
+                        product.setQuantity(newQty);
+                        onQuantityChangedListener.onChange(product.getPrice() * product.getQuantity());
                     } else if (newQty < product.getQuantity()) {
-                        notifyItemChanged(getAdapterPosition());
                         onQuantityChangedListener.onChange(-product.getPrice() * (product.getQuantity() - newQty));
                         product.setQuantity(newQty);
                     } else
                         return false;
-                    return true;
+                    notifyItemChanged(getAdapterPosition());
                 }
+                return true;
             }
             return false;
         }
+
+        @Override
+        public synchronized void onFocusChange(View view, boolean hasFocus) {
+            TextView textView = (TextView) view;
+            product = products.get(getAdapterPosition());
+            int newQty = Integer.parseInt(textView.getText().toString());
+
+            if (!hasFocus) {
+                if (newQty == 0) {
+                    onQuantityChangedListener.onChange(-product.getPrice() * product.getQuantity());
+                    product.setQuantity(newQty);
+                } else if (newQty > product.getQuantity()) {
+                    onQuantityChangedListener.onChange(product.getPrice() * (newQty - product.getQuantity()));
+                    product.setQuantity(newQty);
+                } else if (newQty < product.getQuantity()) {
+                    onQuantityChangedListener.onChange(-product.getPrice() * (product.getQuantity() - newQty));
+                    product.setQuantity(newQty);
+                }
+                notifyItemChanged(getAdapterPosition());
+
+            }
+        }
+
+
+
     }
 }

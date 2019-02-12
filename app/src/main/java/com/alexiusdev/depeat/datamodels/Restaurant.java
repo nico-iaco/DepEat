@@ -1,11 +1,14 @@
 package com.alexiusdev.depeat.datamodels;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class Restaurant {
     private String name, address, description, imageUrl;
     private int rating;
-    private float minOrder;
+    private double minOrder;
     private ArrayList<Product> products;
 
     public Restaurant(String name, String address, String description, String imageUrl, int rating, float minOrder/*, ArrayList<Product> products*/) {
@@ -17,6 +20,16 @@ public class Restaurant {
         this.minOrder = minOrder;
         //this.products = products;
         products = new ArrayList<>();
+    }
+
+    public Restaurant(JSONObject jsonRestaurant) throws JSONException {
+        name = jsonRestaurant.getString("name");
+        address = jsonRestaurant.getString("address");
+        //description =
+        imageUrl = jsonRestaurant.getString("image_url");
+        //rating = rating;
+        minOrder = Double.parseDouble(jsonRestaurant.getString("min_order"));
+        //products = products;
     }
 
     public void setMinOrder(float minOrder) {
@@ -51,7 +64,7 @@ public class Restaurant {
         this.address = address;
     }
 
-    public float getMinOrder() {
+    public double getMinOrder() {
         return minOrder;
     }
 

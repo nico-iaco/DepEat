@@ -39,12 +39,13 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
     private ProgressBar progressBar;
     private Restaurant restaurant;
     private ImageView restaurantIv, mapsIv;
-    private static float total;
+    private static double total;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        total = 0;
         setContentView(R.layout.activity_shop);
 
         mAuth = FirebaseAuth.getInstance();
@@ -113,25 +114,25 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
 
     private ArrayList<Product> getProducts(){
         ArrayList<Product> products = new ArrayList<>();
-        products.add(new Product("hamburger", 0,1.0F));
-        products.add(new Product("hamburger", 0,2.0F));
-        products.add(new Product("hamburger", 0,1.0F));
-        products.add(new Product("hamburger", 0,5.0F));
-        products.add(new Product("hamburger", 0,3.0F));
-        products.add(new Product("hamburger", 0,4.0F));
-        products.add(new Product("hamburger", 0,1.0F));
+        products.add(new Product("hamburger", 0,1.0));
+        products.add(new Product("hamburger", 0,2.0));
+        products.add(new Product("hamburger", 0,1.0));
+        products.add(new Product("hamburger", 0,5.0));
+        products.add(new Product("hamburger", 0,3.0));
+        products.add(new Product("hamburger", 0,4.0));
+        products.add(new Product("hamburger", 0,1.0));
         return products;
     }
 
     @Override
-    public void onChange(float price) {
+    public void onChange(double price) {
         Log.i("PREZZO",String.valueOf(price));
         total += price;
         updateUi(total);
         Log.i("PREZZO_TOTAL",String.valueOf(total));
     }
 
-    private void updateUi(float total){
+    private void updateUi(double total){
         totalPriceTv.setText(getString(R.string.currency).concat(String.format(Locale.getDefault(),"%.2f",total)));
         enableCheckout(total);
         updateProgress((int)total*100);
@@ -141,7 +142,7 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
         progressBar.setProgress(progress);
     }
 
-    public void enableCheckout(float total){
+    public void enableCheckout(double total){
         checkoutBtn.setEnabled(total >= restaurant.getMinOrder());
         checkoutBtn.setTextColor(total >= restaurant.getMinOrder() ? getResources().getColor(R.color.primary_text) : getResources().getColor(R.color.secondary_text));
     }

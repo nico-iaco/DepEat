@@ -20,13 +20,19 @@ import java.util.Locale;
 
 public class RestaurantAdapter extends RecyclerView.Adapter {
     private LayoutInflater inflater;
-    private ArrayList<Restaurant> data;
+    private ArrayList<Restaurant> restaurants;
     private boolean isGridMode;
     private Context context;
 
-    public RestaurantAdapter(Context context, ArrayList<Restaurant> data){
+    public RestaurantAdapter(Context context) {
         inflater = LayoutInflater.from(context);
-        this.data = data;
+        this.restaurants = new ArrayList<>();
+        this.context = context;
+    }
+
+    public RestaurantAdapter(Context context, ArrayList<Restaurant> restaurants){
+        inflater = LayoutInflater.from(context);
+        this.restaurants = restaurants;
         this.context = context;
     }
 
@@ -41,16 +47,21 @@ public class RestaurantAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int index) {
         RestaurantViewHolder restaurantViewHolder = (RestaurantViewHolder) viewHolder;
-        restaurantViewHolder.restaurantNameTV.setText(data.get(index).getName());
-        restaurantViewHolder.restaurantAddressTV.setText(data.get(index).getAddress());
-        restaurantViewHolder.restaurantMinCheckoutValueTV.append(String.valueOf(data.get(index).getMinOrder()));
-        restaurantViewHolder.restaurantRatingTV.setText(String.format(Locale.getDefault(),"%.1f", data.get(index).getRatingFloat()));
-        restaurantViewHolder.ratingBar.setProgress(data.get(index).getRatingInt());
+        restaurantViewHolder.restaurantNameTV.setText(restaurants.get(index).getName());
+        restaurantViewHolder.restaurantAddressTV.setText(restaurants.get(index).getAddress());
+        restaurantViewHolder.restaurantMinCheckoutValueTV.append(String.valueOf(restaurants.get(index).getMinOrder()));
+        restaurantViewHolder.restaurantRatingTV.setText(String.format(Locale.getDefault(),"%.1f", restaurants.get(index).getRatingFloat()));
+        restaurantViewHolder.ratingBar.setProgress(restaurants.get(index).getRatingInt());
     }
 
     @Override
     public int getItemCount() {
-        return data.size();
+        return restaurants.size();
+    }
+
+    public void setRestaurants(ArrayList<Restaurant> restaurants){
+        this.restaurants = restaurants;
+        notifyDataSetChanged();
     }
 
     public class RestaurantViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -85,4 +96,5 @@ public class RestaurantAdapter extends RecyclerView.Adapter {
     public void setGridMode(boolean gridMode) {
         isGridMode = gridMode;
     }
+
 }

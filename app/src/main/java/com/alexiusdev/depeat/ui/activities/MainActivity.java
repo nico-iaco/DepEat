@@ -8,17 +8,26 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.alexiusdev.depeat.R;
-import com.alexiusdev.depeat.datamodels.Product;
 import com.alexiusdev.depeat.datamodels.Restaurant;
 import com.alexiusdev.depeat.ui.adapters.RestaurantAdapter;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 
@@ -26,6 +35,7 @@ import static com.alexiusdev.depeat.ui.Utility.*;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
     private MenuItem logoutMenuItem;
     private MenuItem loginMenuItem;
     private MenuItem gridViewMenuItem;
@@ -36,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     FirebaseUser currentUser;
     RecyclerView restaurantRV;
-    ArrayList<Restaurant> restaurantList;
+    ArrayList<Restaurant> restaurants = new ArrayList<>();
 
 
     @Override
@@ -46,13 +56,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         restaurantRV = findViewById(R.id.restaurant_rv);
         restaurantRV.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new RestaurantAdapter(this,getData());
+        adapter = new RestaurantAdapter(this);
         restaurantRV.setAdapter(adapter);
 
         mAuth = FirebaseAuth.getInstance();
 
         if(getIntent().getExtras() != null)
             showToast(this, getString(R.string.welcome) + " " + getIntent().getExtras().getString(EMAIL_KEY));
+
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url ="http://5ba19290ee710f0014dd764c.mockapi.io/api/v1/restaurant";
+        // Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(TAG,response);
+                        //Start parsing
+                        try {
+                            JSONArray restaurantJsonArray = new JSONArray(response);
+                            for(int i = 0; i < restaurantJsonArray.length(); i++){
+                                Restaurant restaurant = new Restaurant(restaurantJsonArray.getJSONObject(i));
+                                restaurants.add(restaurant);
+                            }
+                            adapter.setRestaurants(restaurants);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG,error.getMessage());
+            }
+        });
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
     }
 
     @Override
@@ -124,15 +164,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
     }
 
-    private ArrayList<Restaurant> getData(){
-        restaurantList = new ArrayList<>();
-        restaurantList.add(new Restaurant("KFC","via dei Tulipani, 7","DESCRIPTION","URL",42,4.3F));
-        restaurantList.add(new Restaurant("McDonald","via dei Girasoli, 147","DESCRIPTION","URL",35,4.3F));
-        restaurantList.add(new Restaurant("Burger King","via dei Gerani, 36","DESCRIPTION","URL",22,4.3F));
-        restaurantList.add(new Restaurant("Makkitella Food","via dei Lambruschi, 31","DESCRIPTION","URL",42,4.3F));
-        restaurantList.add(new Restaurant("567","via delle Camelie, 287","DESCRIPTION","URL",37,4.3F));
-        restaurantList.add(new Restaurant("Subway","via dei Narcisi, 75","DESCRIPTION","URL",14,4.3F));
-        return restaurantList;
+    private ArrayList<Restaurant> getRestaurants(){
+        return restaurants;
     }
 
     private void setLayoutManager(){
@@ -140,10 +173,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         adapter.setGridMode(!adapter.isGridMode());
         restaurantRV.setLayoutManager(layoutManager);
         restaurantRV.setAdapter(adapter);
-    }
-    private ArrayList<Product> getProducts(){
-        ArrayList<Product> products = new ArrayList<>();
-        products.add(new Product("hamburger", 2,2.6F));
-        return products;
     }
 }
