@@ -7,42 +7,42 @@
         android:id="@+id/relative_layout_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    <ImageView
-        android:id="@+id/restaurant_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@mipmap/ic_launcher_round"
-        android:padding="8dp"/>
-    <TextView
-        android:id="@+id/restaurant_name_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="NOME_RISTORANTE"
-        android:layout_toRightOf="@id/restaurant_iv"
-        android:layout_toLeftOf="@id/maps_iv"
-        android:layout_marginTop="25dp"
-        android:textColor="@color/primary_text"
-        android:gravity="center"/>
-    <TextView
-        android:id="@+id/restaurant_address_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ADDRESS"
-        android:layout_alignLeft="@id/restaurant_name_tv"
-        android:layout_alignRight="@id/restaurant_name_tv"
-        android:layout_below="@id/restaurant_name_tv"
-        android:gravity="center"
-        android:textColor="@color/secondary_text"/>
-    <ImageView
-        android:id="@+id/maps_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_place_black_24dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="50dp"
-        android:layout_centerVertical="true"
-        android:clickable="true"
-        android:focusable="true"/>
+        <ImageView
+            android:id="@+id/restaurant_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_launcher_round"
+            android:padding="8dp"/>
+        <TextView
+            android:id="@+id/restaurant_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="NOME_RISTORANTE"
+            android:layout_toEndOf="@id/restaurant_iv"
+            android:layout_toStartOf="@id/maps_iv"
+            android:layout_marginTop="25dp"
+            android:textColor="@color/primary_text"
+            android:gravity="center"/>
+        <TextView
+            android:id="@+id/restaurant_address_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="ADDRESS"
+            android:layout_alignStart="@id/restaurant_name_tv"
+            android:layout_alignEnd="@id/restaurant_name_tv"
+            android:layout_below="@id/restaurant_name_tv"
+            android:gravity="center"
+            android:textColor="@color/secondary_text"/>
+        <ImageView
+            android:id="@+id/maps_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_place_black_24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="50dp"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:focusable="true"/>
     </RelativeLayout>
 
 
@@ -65,7 +65,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_alignParentBottom="true"
-        android:padding="6dp">
+        android:padding="8dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

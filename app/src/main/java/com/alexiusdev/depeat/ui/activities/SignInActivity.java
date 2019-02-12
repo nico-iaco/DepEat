@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;;
 
 import com.alexiusdev.depeat.R;
-import com.alexiusdev.depeat.ui.User;
+import com.alexiusdev.depeat.datamodels.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;

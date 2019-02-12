@@ -24,7 +24,6 @@ public class ProductAdapter extends RecyclerView.Adapter {
     private Context context;
     private ArrayList<Product> products;
     private OnQuantityChangedListener onQuantityChangedListener;
-    private OnQuantitySettedListener onQuantitySettedListener;
 
     public ProductAdapter(Context context, ArrayList<Product> products) {
         inflater = LayoutInflater.from(context);
@@ -35,7 +34,7 @@ public class ProductAdapter extends RecyclerView.Adapter {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = inflater.inflate(R.layout.item_cart, viewGroup,false);
+        View view = inflater.inflate(R.layout.item_shop, viewGroup, false);
         return new ProductViewHolder(view);
     }
 
@@ -45,8 +44,8 @@ public class ProductAdapter extends RecyclerView.Adapter {
         ProductViewHolder productViewHolder = (ProductViewHolder) viewHolder;
 
         productViewHolder.productName.setText(product.getName());
-        productViewHolder.productTotalPrice.setText(context.getString(R.string.currency).concat(String.format(Locale.getDefault(),"%.2f",product.getPrice() * product.getQuantity())));
-        productViewHolder.productSinglePrice.setText(context.getString(R.string.currency).concat(String.format(Locale.getDefault(),"%.2f", product.getPrice())));
+        productViewHolder.productTotalPrice.setText(context.getString(R.string.currency).concat(String.format(Locale.getDefault(), "%.2f", product.getPrice() * product.getQuantity())));
+        productViewHolder.productSinglePrice.setText(context.getString(R.string.currency).concat(String.format(Locale.getDefault(), "%.2f", product.getPrice())));
         productViewHolder.productQty.setText(String.valueOf(product.getQuantity()));
     }
 
@@ -67,26 +66,13 @@ public class ProductAdapter extends RecyclerView.Adapter {
         this.onQuantityChangedListener = onQuantityChangedListener;
     }
 
-    public interface OnQuantitySettedListener {
-        void setPrice(float price);
-    }
-
-    public OnQuantitySettedListener getOnQuantitySettedListener() {
-        return onQuantitySettedListener;
-    }
-
-    public void setOnQuantitySettedListener(OnQuantitySettedListener onQuantitySettedListener) {
-        this.onQuantitySettedListener = onQuantitySettedListener;
-    }
-
-
-
 
     public class ProductViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, TextView.OnEditorActionListener {
         private TextView productName, productTotalPrice, productSinglePrice;
         private ImageView addBtn, removeBtn;
         private EditText productQty;
         private Product product;
+        private boolean hasFocus;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -113,7 +99,7 @@ public class ProductAdapter extends RecyclerView.Adapter {
                 notifyItemChanged(getAdapterPosition());
                 onQuantityChangedListener.onChange(product.getPrice());
             } else if (view.getId() == R.id.minus_iv) {
-                if(product.getQuantity() == 0)return;
+                if (product.getQuantity() == 0) return;
                 product.decreaseQuantity();
                 notifyItemChanged(getAdapterPosition());
                 onQuantityChangedListener.onChange(product.getPrice() * -1);
@@ -122,25 +108,24 @@ public class ProductAdapter extends RecyclerView.Adapter {
 
         @Override
         public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-            if(actionId == EditorInfo.IME_ACTION_DONE) {
+            if (actionId == EditorInfo.IME_ACTION_DONE ) {
                 product = products.get(getAdapterPosition());
                 int newQty = Integer.parseInt(textView.getText().toString());
 
                 if (textView.getId() == productQty.getId()) {
-                    if(newQty > product.getQuantity()) {
+                    if (newQty > product.getQuantity()) {
                         product.setQuantity(newQty);
                         notifyItemChanged(getAdapterPosition());
-                        onQuantitySettedListener.setPrice(product.getPrice() * product.getQuantity());
-                    }else if (newQty < product.getQuantity()) {
-                        product.setQuantity(newQty);
+                        onQuantityChangedListener.onChange(product.getPrice() * product.getQuantity());
+                    } else if (newQty == 0) {
                         notifyItemChanged(getAdapterPosition());
-                        onQuantitySettedListener.setPrice(product.getPrice() * -product.getQuantity());
-                    }else if(newQty == 0){
+                        onQuantityChangedListener.onChange(-product.getPrice() * product.getQuantity());
                         product.setQuantity(newQty);
+                    } else if (newQty < product.getQuantity()) {
                         notifyItemChanged(getAdapterPosition());
-                        onQuantitySettedListener.setPrice(product.getPrice() * -product.getQuantity());
-                    }
-                    else
+                        onQuantityChangedListener.onChange(-product.getPrice() * (product.getQuantity() - newQty));
+                        product.setQuantity(newQty);
+                    } else
                         return false;
                     return true;
                 }

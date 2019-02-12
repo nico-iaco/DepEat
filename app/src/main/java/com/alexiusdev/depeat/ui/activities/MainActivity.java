@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(this, LoginActivity.class));
                 return true;
             case (R.id.cart_menu):
-                startActivity(new Intent(this, CartActivity.class));
+                startActivity(new Intent(this, ShopActivity.class));
                 return true;
             case (R.id.logout_menu):
                 mAuth.signOut();

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/review_order"
+        android:textColor="@color/primary_text"/>
+    <TextView
+        android:id="@+id/name_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="NOME_RISTORANTE"
+        android:layout_marginTop="40dp"
+        android:textColor="@color/primary_text"
+        android:gravity="center"
+        style="@style/TextAppearance.AppCompat.Title"/>
+    <TextView
+        android:id="@+id/address_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="ADDRESS"
+        android:layout_alignStart="@id/restaurant_name_tv"
+        android:layout_below="@id/restaurant_name_tv"
+        android:gravity="center"
+        android:textColor="@color/secondary_text"/>
+
+    <View
+        style="@style/Divider"
+        android:layout_above="@id/product_rv"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/product_rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/address_tv"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <View
+        android:id="@+id/bottom_divider"
+        style="@style/Divider"
+        android:layout_below="@id/product_rv"/>
+
+    <TextView
+        android:id="@+id/price_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Total: €3"
+        android:text="@string/total"
+        android:layout_below="@id/bottom_divider"
+        android:textColor="@color/primary_text"
+        style="@style/TextAppearance.AppCompat.Title"/>
+    <Button
+        android:id="@+id/pay_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/pay"
+        android:layout_alignParentBottom="true"
+        style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+        android:textColor="@color/primary_text"
+        android:enabled="true"/>
+</RelativeLayout>

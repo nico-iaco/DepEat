@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardElevation="@dimen/cardview_default_elevation"
@@ -27,17 +27,17 @@
             android:id="@+id/name_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@color/primary_text"
             android:layout_marginTop="4dp"
-            android:text="NAME"/>
+            tools:text="NAME"
+            style="@style/TextAppearance.AppCompat.Title"/>
         <TextView
             android:id="@+id/restaurant_address_tv"
             android:layout_width="wrap_content"
             android:textColor="@color/secondary_text"
             android:layout_height="wrap_content"
-            android:text="ADDRESS"/>
+            tools:text="ADDRESS"/>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/currency"
-                android:layout_marginLeft="4dp"/>
+                android:layout_marginStart="4dp"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -62,7 +62,7 @@
                 android:id="@+id/rating_number_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="2,4"
+                tools:text="2,4"
                 android:textColor="@color/secondary_text"/>
             <RatingBar
                 android:id="@+id/rating_stars"

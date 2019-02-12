@@ -1,4 +1,4 @@
-package com.alexiusdev.depeat.ui;
+package com.alexiusdev.depeat.datamodels;
 
 public class User {
     private String email;
