@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alexiusdev.depeat.R;
@@ -41,6 +42,7 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
     private ProgressBar progressBar;
     private Restaurant restaurant;
     private ImageView restaurantIv, mapsIv;
+    private RelativeLayout nothingRl;
     private static double total;
 
 
@@ -63,11 +65,12 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
         mapsIv = findViewById(R.id.maps_iv);
         restaurantIv = findViewById(R.id.restaurant_iv);
         productRv = findViewById(R.id.product_rv);
+        nothingRl = findViewById(R.id.nothing_rl);
 
         checkoutBtn.setOnClickListener(this);
         mapsIv.setOnClickListener(this);
 
-        restaurant.setProducts(getProducts());
+
         restaurantNameTv.setText(restaurant.getName());
         restaurantAddressTv.setText(restaurant.getAddress());
         progressBar.setMax((int)restaurant.getMinOrder() * 100);
@@ -87,6 +90,14 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
 
         Glide.with(this).load(restaurant.getImageUrl()).into(restaurantIv);
         //TODO set all the appropriate icons
+
+
+
+
+        if(restaurant.getProducts().isEmpty()){
+            nothingRl.setVisibility(View.VISIBLE);
+            productRv.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -117,25 +128,15 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
         String address = "";
         String imageUrl = "";
         double minOrder = 0.0;
-        if (getIntent().getExtras() != null) {
+        ArrayList<Product> products = new ArrayList<>();
+        if (getIntent().getExtras() != null && getIntent().getExtras().get(RESTAURANT_PRODUCTS) instanceof ArrayList) {
             name = getIntent().getExtras().getString(RESTAURANT_NAME);
             address = getIntent().getExtras().getString(RESTAURANT_ADDRESS);
             imageUrl = getIntent().getExtras().getString(RESTAURANT_IMAGE_URL);
             minOrder = getIntent().getExtras().getDouble(RESTAURANT_MIN_ORDER);
+            products = (ArrayList<Product>) getIntent().getExtras().get(RESTAURANT_PRODUCTS);
         }
-        return new Restaurant(name, address, imageUrl, 0, minOrder);
-    }
-
-    private ArrayList<Product> getProducts(){
-        ArrayList<Product> products = new ArrayList<>();
-        products.add(new Product("hamburger", 0,1.0));
-        products.add(new Product("hamburger", 0,2.0));
-        products.add(new Product("hamburger", 0,1.0));
-        products.add(new Product("hamburger", 0,5.0));
-        products.add(new Product("hamburger", 0,3.0));
-        products.add(new Product("hamburger", 0,4.0));
-        products.add(new Product("hamburger", 0,1.0));
-        return products;
+        return new Restaurant(name, address, imageUrl, 0, minOrder, products);
     }
 
     @Override

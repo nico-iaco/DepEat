@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.alexiusdev.depeat.R;
 import com.alexiusdev.depeat.datamodels.Product;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -26,8 +27,6 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private Context context;
     private ArrayList<Product> products;
     private OnQuantityChangedListener onQuantityChangedListener;
-    private RecyclerView recyclerView;
-
 
     public ProductAdapter(Context context, ArrayList<Product> products) {
         inflater = LayoutInflater.from(context);
@@ -51,6 +50,8 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         productViewHolder.productTotalPrice.setText(context.getString(R.string.currency).concat(String.format(Locale.getDefault(), "%.2f", product.getPrice() * product.getQuantity())));
         productViewHolder.productSinglePrice.setText(context.getString(R.string.currency).concat(String.format(Locale.getDefault(), "%.2f", product.getPrice())));
         productViewHolder.productQty.setText(String.valueOf(product.getQuantity()));
+        Glide.with(context).load(product.getImageUrl()).into(productViewHolder.foodIv);
+
     }
 
     @Override
@@ -70,17 +71,10 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.onQuantityChangedListener = onQuantityChangedListener;
     }
 
-    @Override
-    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-        this.recyclerView = recyclerView;
-    }
-
     public class ProductViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView productName, productTotalPrice, productSinglePrice, productQty;
-        private ImageView addBtn, removeBtn;
+        private ImageView addBtn, removeBtn, foodIv;
         private Product product;
-        private boolean isInsideOnEditorAction;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -91,6 +85,7 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             productQty = itemView.findViewById(R.id.quantity_tv);
             addBtn = itemView.findViewById(R.id.plus_iv);
             removeBtn = itemView.findViewById(R.id.minus_iv);
+            foodIv = itemView.findViewById(R.id.food_iv);
 
             addBtn.setOnClickListener(this);
             removeBtn.setOnClickListener(this);

@@ -11,7 +11,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 public class RestController {
-    private final static String BASE_URL = "http://5c659d3419df280014b6272a.mockapi.io/api/";
+    private final static String BASE_URL = "";
     private final static String VERSION = "v1/";
     private static final String TAG = RestController.class.getSimpleName();
 

@@ -9,17 +9,16 @@ public class Restaurant {
     private String name, address, imageUrl;
     private int rating;
     private double minOrder;
-    private ArrayList<Product> products;
+    private ArrayList<Product> products = new ArrayList<>();
     public static final String END_POINT = "restaurants";
 
-    public Restaurant(String name, String address, String imageUrl, int rating, double minOrder/*, ArrayList<Product> products*/) {
+    public Restaurant(String name, String address, String imageUrl, int rating, double minOrder, ArrayList<Product> products) {
         this.name = name;
         this.address = address;
         this.imageUrl = imageUrl;
         this.rating = rating;
         this.minOrder = minOrder;
-        //this.products = products;
-        products = new ArrayList<>();
+        this.products = products;
     }
 
     public Restaurant(JSONObject jsonRestaurant) throws JSONException {
@@ -28,12 +27,8 @@ public class Restaurant {
         imageUrl = jsonRestaurant.getString("image_url");
         rating = Integer.parseInt(jsonRestaurant.getString("rating"));
         minOrder = Double.parseDouble(jsonRestaurant.getString("min_order"));
-<<<<<<< HEAD
-        //products = products;
-=======
         for(int i = 0; i < jsonRestaurant.getJSONArray("products").length(); i++)
             products.add(new Product(jsonRestaurant.getJSONArray("products").getJSONObject(i)));
->>>>>>> 605226b... added local json
     }
 
     public void setMinOrder(float minOrder) {

@@ -1,7 +1,12 @@
 package com.alexiusdev.depeat.datamodels;
 
-public class Product {
-    private String name;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.Serializable;
+
+public class Product implements Serializable {
+    private String name, ingredients, imageUrl;
     private int quantity;
     private double price;
 
@@ -9,6 +14,14 @@ public class Product {
         this.name = name;
         this.quantity = quantity;
         this.price = price;
+    }
+
+    public Product(JSONObject jsonProduct) throws JSONException {
+        this.name = jsonProduct.getString("name");
+        this.ingredients = jsonProduct.getString("ingredients");
+        this.imageUrl = jsonProduct.getString("image_url");
+        this.quantity = 0;
+        this.price = jsonProduct.getDouble("price");
     }
 
     public String getName() {
@@ -42,5 +55,25 @@ public class Product {
     public void decreaseQuantity(){
         if(quantity == 0) return;
         this.quantity--;
+    }
+
+    public String getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(String ingredients) {
+        this.ingredients = ingredients;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 }

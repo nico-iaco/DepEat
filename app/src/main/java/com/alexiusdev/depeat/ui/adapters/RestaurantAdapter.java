@@ -53,7 +53,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter {
         RestaurantViewHolder restaurantViewHolder = (RestaurantViewHolder) viewHolder;
         restaurantViewHolder.restaurantNameTV.setText(restaurants.get(index).getName());
         restaurantViewHolder.restaurantAddressTV.setText(restaurants.get(index).getAddress());
-        restaurantViewHolder.restaurantMinOrderTV.setText(context.getString(R.string.currency) + String.format(Locale.getDefault(),"%.2f",restaurants.get(index).getMinOrder()));
+        restaurantViewHolder.restaurantMinOrderTV.setText(context.getString(R.string.currency).concat(String.format(Locale.getDefault(),"%.2f",restaurants.get(index).getMinOrder())));
         restaurantViewHolder.restaurantRatingTV.setText(String.format(Locale.getDefault(),"%.1f", restaurants.get(index).getRatingFloat()));
         restaurantViewHolder.ratingBar.setProgress(restaurants.get(index).getRatingInt());
         Glide.with(context).load(restaurants.get(index).getImageUrl()).into(restaurantViewHolder.restaurantIV);
@@ -90,10 +90,12 @@ public class RestaurantAdapter extends RecyclerView.Adapter {
         @Override
         public void onClick(View view) {
             if (view.getId() == restaurantCard.getId()){
-                context.startActivity(new Intent(context, ShopActivity.class).putExtra(RESTAURANT_NAME, restaurantNameTV.getText().toString())
+                context.startActivity(new Intent(context, ShopActivity.class)
+                        .putExtra(RESTAURANT_NAME, restaurants.get(getAdapterPosition()).getName())
                         .putExtra(RESTAURANT_ADDRESS, restaurants.get(getAdapterPosition()).getAddress())
                         .putExtra(RESTAURANT_IMAGE_URL, restaurants.get(getAdapterPosition()).getImageUrl())
-                        .putExtra(RESTAURANT_MIN_ORDER, restaurants.get(getAdapterPosition()).getMinOrder()));
+                        .putExtra(RESTAURANT_MIN_ORDER, restaurants.get(getAdapterPosition()).getMinOrder())
+                        .putExtra(RESTAURANT_PRODUCTS, restaurants.get(getAdapterPosition()).getProducts()));
             }
         }
     }

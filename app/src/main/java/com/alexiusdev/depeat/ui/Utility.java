@@ -10,6 +10,7 @@ public class Utility {
     public static final String RESTAURANT_ADDRESS = "restaurantAddress";
     public static final String RESTAURANT_IMAGE_URL = "restaurantImageUrl";
     public static final String RESTAURANT_MIN_ORDER = "restaurantMinOrder";
+    public static final String RESTAURANT_PRODUCTS = "restaurantProducts";
 
     public static boolean isValidEmail(String emailStr) {
         return Patterns.EMAIL_ADDRESS.matcher(emailStr).matches();
