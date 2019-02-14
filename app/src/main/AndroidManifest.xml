@@ -29,7 +29,7 @@
             android:label="@string/login"/>
         <activity
             android:name=".ui.activities.ShopActivity"
-            android:label="@string/cart"/>
+            />
         <activity android:name=".ui.activities.CheckoutActivity" />
 
 

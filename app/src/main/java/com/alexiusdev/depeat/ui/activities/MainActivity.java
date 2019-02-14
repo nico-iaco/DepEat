@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.util.Log;
+
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,13 +17,17 @@ import android.view.View;
 
 import com.alexiusdev.depeat.R;
 import com.alexiusdev.depeat.datamodels.Restaurant;
+import com.alexiusdev.depeat.services.RestController;
+import com.alexiusdev.depeat.ui.Utility;
 import com.alexiusdev.depeat.ui.adapters.RestaurantAdapter;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -33,8 +38,7 @@ import java.util.ArrayList;
 
 import static com.alexiusdev.depeat.ui.Utility.*;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, Response.Listener<String>, Response.ErrorListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private MenuItem logoutMenuItem;
     private MenuItem loginMenuItem;
@@ -43,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FirebaseAuth mAuth;
     private RecyclerView.LayoutManager layoutManager;
     private RestaurantAdapter adapter;
+    private static final String URL_API_RESTAURANTS = "http://5ba19290ee710f0014dd764c.mockapi.io/api/v1/restaurant";
+    private RestController restController;
 
     FirebaseUser currentUser;
     RecyclerView restaurantRV;
@@ -64,35 +70,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(getIntent().getExtras() != null)
             showToast(this, getString(R.string.welcome) + " " + getIntent().getExtras().getString(EMAIL_KEY));
 
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url ="http://5ba19290ee710f0014dd764c.mockapi.io/api/v1/restaurant";
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d(TAG,response);
-                        //Start parsing
-                        try {
-                            JSONArray restaurantJsonArray = new JSONArray(response);
-                            for(int i = 0; i < restaurantJsonArray.length(); i++){
-                                Restaurant restaurant = new Restaurant(restaurantJsonArray.getJSONObject(i));
-                                restaurants.add(restaurant);
-                            }
-                            adapter.setRestaurants(restaurants);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG,error.getMessage());
-            }
-        });
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
+        restController = new RestController(this);
+        restController.getRequest(Restaurant.END_POINT,this,this);
     }
 
     @Override
@@ -173,5 +152,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         adapter.setGridMode(!adapter.isGridMode());
         restaurantRV.setLayoutManager(layoutManager);
         restaurantRV.setAdapter(adapter);
+    }
+
+    @Override
+    public void onErrorResponse(VolleyError error) {
+        showToast(this,error.getMessage());
+    }
+
+    @Override
+    public void onResponse(String response) {
+        try {
+            JSONArray jsonArray = new JSONArray(response);
+            for(int i = 0; i < jsonArray.length(); i++){
+                restaurants.add(new Restaurant(jsonArray.getJSONObject(i)));
+            }
+            adapter.setRestaurants(restaurants);
+        } catch (JSONException e) {
+            Log.e(TAG,e.getMessage());
+        }
     }
 }

@@ -6,15 +6,15 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class Restaurant {
-    private String name, address, description, imageUrl;
+    private String name, address, imageUrl;
     private int rating;
     private double minOrder;
     private ArrayList<Product> products;
+    public static final String END_POINT = "restaurants";
 
-    public Restaurant(String name, String address, String description, String imageUrl, int rating, float minOrder/*, ArrayList<Product> products*/) {
+    public Restaurant(String name, String address, String imageUrl, int rating, double minOrder/*, ArrayList<Product> products*/) {
         this.name = name;
         this.address = address;
-        this.description = description;
         this.imageUrl = imageUrl;
         this.rating = rating;
         this.minOrder = minOrder;
@@ -25,9 +25,8 @@ public class Restaurant {
     public Restaurant(JSONObject jsonRestaurant) throws JSONException {
         name = jsonRestaurant.getString("name");
         address = jsonRestaurant.getString("address");
-        //description =
         imageUrl = jsonRestaurant.getString("image_url");
-        //rating = rating;
+        rating = Integer.parseInt(jsonRestaurant.getString("rating"));
         minOrder = Double.parseDouble(jsonRestaurant.getString("min_order"));
         //products = products;
     }
@@ -80,16 +79,12 @@ public class Restaurant {
         this.products = products;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getImageUrl() {
         return imageUrl;
+    }
+
+    public static String getEndPoint() {
+        return END_POINT;
     }
 
     public void setImageUrl(String imageUrl) {

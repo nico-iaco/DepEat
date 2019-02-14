@@ -72,7 +72,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         switch(view.getId()){
             case R.id.login_btn:
-                login(emailET.getText().toString(),passwordET.getText().toString());
+                login(emailET.getText().toString(), passwordET.getText().toString());
                 break;
             case R.id.signin_btn:
                 startActivity(new Intent(LoginActivity.this, SignInActivity.class).putExtra(EMAIL_KEY,emailET.getText().toString()));

@@ -4,15 +4,19 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.alexiusdev.depeat.R;
 import com.alexiusdev.depeat.datamodels.Restaurant;
+import static com.alexiusdev.depeat.ui.Utility.*;
 import com.alexiusdev.depeat.ui.activities.ShopActivity;
+import com.bumptech.glide.Glide;
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
@@ -49,9 +53,10 @@ public class RestaurantAdapter extends RecyclerView.Adapter {
         RestaurantViewHolder restaurantViewHolder = (RestaurantViewHolder) viewHolder;
         restaurantViewHolder.restaurantNameTV.setText(restaurants.get(index).getName());
         restaurantViewHolder.restaurantAddressTV.setText(restaurants.get(index).getAddress());
-        restaurantViewHolder.restaurantMinCheckoutValueTV.append(String.valueOf(restaurants.get(index).getMinOrder()));
+        restaurantViewHolder.restaurantMinOrderTV.setText(context.getString(R.string.currency) + String.format(Locale.getDefault(),"%.2f",restaurants.get(index).getMinOrder()));
         restaurantViewHolder.restaurantRatingTV.setText(String.format(Locale.getDefault(),"%.1f", restaurants.get(index).getRatingFloat()));
         restaurantViewHolder.ratingBar.setProgress(restaurants.get(index).getRatingInt());
+        Glide.with(context).load(restaurants.get(index).getImageUrl()).into(restaurantViewHolder.restaurantIV);
     }
 
     @Override
@@ -65,18 +70,19 @@ public class RestaurantAdapter extends RecyclerView.Adapter {
     }
 
     public class RestaurantViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        public TextView restaurantNameTV, restaurantAddressTV, restaurantMinCheckoutValueTV, restaurantRatingTV;
-        public RatingBar ratingBar;
-        public MaterialCardView restaurantCard;
+        private TextView restaurantNameTV, restaurantAddressTV, restaurantMinOrderTV, restaurantRatingTV;
+        private RatingBar ratingBar;
+        private MaterialCardView restaurantCard;
+        private ImageView restaurantIV;
 
-        public RestaurantViewHolder(@NonNull View itemView) {
+        private RestaurantViewHolder(@NonNull View itemView) {
             super(itemView);
             restaurantNameTV = itemView.findViewById(R.id.name_tv);
             restaurantAddressTV = itemView.findViewById(R.id.restaurant_address_tv);
-            restaurantMinCheckoutValueTV = itemView.findViewById(R.id.min_checkout_value);
+            restaurantMinOrderTV = itemView.findViewById(R.id.min_order_value);
             restaurantRatingTV = itemView.findViewById(R.id.rating_number_tv);
             ratingBar = itemView.findViewById(R.id.rating_stars);
-
+            restaurantIV = itemView.findViewById(R.id.logo_iv);
             restaurantCard = itemView.findViewById(R.id.restaurant_card);
             restaurantCard.setOnClickListener(this);
         }
@@ -84,7 +90,10 @@ public class RestaurantAdapter extends RecyclerView.Adapter {
         @Override
         public void onClick(View view) {
             if (view.getId() == restaurantCard.getId()){
-                context.startActivity(new Intent(context, ShopActivity.class));
+                context.startActivity(new Intent(context, ShopActivity.class).putExtra(RESTAURANT_NAME, restaurantNameTV.getText().toString())
+                        .putExtra(RESTAURANT_ADDRESS, restaurants.get(getAdapterPosition()).getAddress())
+                        .putExtra(RESTAURANT_IMAGE_URL, restaurants.get(getAdapterPosition()).getImageUrl())
+                        .putExtra(RESTAURANT_MIN_ORDER, restaurants.get(getAdapterPosition()).getMinOrder()));
             }
         }
     }

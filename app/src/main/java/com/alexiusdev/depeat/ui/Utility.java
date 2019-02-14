@@ -6,6 +6,10 @@ import android.widget.Toast;
 
 public class Utility {
     public static final String EMAIL_KEY = "email";
+    public static final String RESTAURANT_NAME = "restaurantName";
+    public static final String RESTAURANT_ADDRESS = "restaurantAddress";
+    public static final String RESTAURANT_IMAGE_URL = "restaurantImageUrl";
+    public static final String RESTAURANT_MIN_ORDER = "restaurantMinOrder";
 
     public static boolean isValidEmail(String emailStr) {
         return Patterns.EMAIL_ADDRESS.matcher(emailStr).matches();

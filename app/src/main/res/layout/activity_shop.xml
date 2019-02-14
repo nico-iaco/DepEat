@@ -12,27 +12,33 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@mipmap/ic_launcher_round"
-            android:padding="8dp"/>
-        <TextView
-            android:id="@+id/restaurant_name_tv"
-            android:layout_width="wrap_content"
+            android:padding="8dp"
+            android:scaleType="fitXY"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="NOME_RISTORANTE"
             android:layout_toEndOf="@id/restaurant_iv"
             android:layout_toStartOf="@id/maps_iv"
-            android:layout_marginTop="25dp"
-            android:textColor="@color/primary_text"
-            android:gravity="center"/>
-        <TextView
-            android:id="@+id/restaurant_address_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="ADDRESS"
-            android:layout_alignStart="@id/restaurant_name_tv"
-            android:layout_alignEnd="@id/restaurant_name_tv"
-            android:layout_below="@id/restaurant_name_tv"
-            android:gravity="center"
-            android:textColor="@color/secondary_text"/>
+            android:gravity="center">
+            <TextView
+                android:id="@+id/restaurant_name_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="NOME_RISTORANTE"
+                android:layout_marginTop="25dp"
+                android:textColor="@color/primary_text"
+                android:gravity="center" />
+            <TextView
+                android:id="@+id/restaurant_address_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="ADDRESS"
+                android:layout_alignStart="@id/restaurant_name_tv"
+                android:layout_alignEnd="@id/restaurant_name_tv"
+                android:layout_below="@id/restaurant_name_tv"
+                android:gravity="center"
+                android:textColor="@color/secondary_text"/>
+        </RelativeLayout>
         <ImageView
             android:id="@+id/maps_iv"
             android:layout_width="wrap_content"
@@ -78,7 +84,7 @@
                 android:text="@string/min_checkout"
                 android:textColor="@color/primary_text"/>
             <TextView
-                android:id="@+id/min_checkout_tv"
+                android:id="@+id/min_order_value"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 tools:text="@string/min_checkout_value"
@@ -91,7 +97,7 @@
                 android:text="@string/total"
                 android:textColor="@color/primary_text"/>
             <TextView
-                android:id="@+id/total_price_tv"
+                android:id="@+id/total_price_value"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/min_checkout_value"

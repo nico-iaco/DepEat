@@ -116,7 +116,8 @@
             android:id="@+id/credits_tv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="@string/credits"
+            android:text="@string/credits"
+            android:textColor="@color/secondary_text"
             android:gravity="center"
             android:layout_weight="10"
             android:clickable="true"
@@ -125,6 +126,7 @@
             android:id="@+id/version_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="@string/version"/>
+            android:text="@string/version"
+            android:textColor="@color/secondary_text"/>
     </LinearLayout>
 </LinearLayout>

@@ -2,7 +2,7 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tool="http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
@@ -25,34 +25,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@mipmap/ic_launcher"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_gravity="center_horizontal"
+            android:scaleType="fitXY"/>
         <TextView
             android:id="@+id/name_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textStyle="bold"
             android:textColor="@color/primary_text"
-            tool:text="NAME"
-            android:layout_marginTop="-4dp"/>
+            tools:text="NAME"
+            android:layout_marginTop="-4dp"
+            style="@style/TextAppearance.AppCompat.Title"/>
         <TextView
             android:id="@+id/restaurant_address_tv"
             android:layout_width="wrap_content"
             android:textColor="@color/secondary_text"
             android:layout_height="wrap_content"
-            tool:text="ADDRESS"/>
+            tools:text="ADDRESS"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <TextView
-                android:id="@+id/min_checkout_tv"
+                android:id="@+id/min_order_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/min_checkout"
-                android:textColor="@color/secondary_text"/>
+                android:textColor="@color/secondary_text" />
             <TextView
-                android:id="@+id/min_checkout_value"
+                android:id="@+id/min_order_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/currency"
@@ -65,7 +66,7 @@
                 android:id="@+id/rating_number_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tool:text="2,4"
+                tools:text="2,4"
                 android:textColor="@color/secondary_text"/>
             <RatingBar
                 android:id="@+id/rating_stars"

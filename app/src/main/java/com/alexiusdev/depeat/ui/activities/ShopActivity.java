@@ -13,7 +13,9 @@ import android.widget.TextView;
 import com.alexiusdev.depeat.R;
 import com.alexiusdev.depeat.datamodels.Product;
 import com.alexiusdev.depeat.datamodels.Restaurant;
+import static com.alexiusdev.depeat.ui.Utility.*;
 import com.alexiusdev.depeat.ui.adapters.ProductAdapter;
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -35,7 +37,7 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView productRv;
     private LinearLayoutManager layoutManager;
     private ProductAdapter adapter;
-    private TextView restaurantNameTv, restaurantAddressTv, totalPriceTv, minCheckoutTv;
+    private TextView restaurantNameTv, restaurantAddressTv, totalPriceTv, minOrderTv;
     private ProgressBar progressBar;
     private Restaurant restaurant;
     private ImageView restaurantIv, mapsIv;
@@ -45,6 +47,9 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        restaurant = getRestaurantFromIntent();
+        setTitle(restaurant.getName());
         total = 0;
         setContentView(R.layout.activity_shop);
 
@@ -53,16 +58,14 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
         progressBar = findViewById(R.id.progressbar);
         restaurantNameTv = findViewById(R.id.restaurant_name_tv);
         restaurantAddressTv = findViewById(R.id.restaurant_address_tv);
-        totalPriceTv = findViewById(R.id.total_price_tv);
-        minCheckoutTv = findViewById(R.id.min_checkout_tv);
+        totalPriceTv = findViewById(R.id.total_price_value);
+        minOrderTv = findViewById(R.id.min_order_value);
         mapsIv = findViewById(R.id.maps_iv);
         restaurantIv = findViewById(R.id.restaurant_iv);
         productRv = findViewById(R.id.product_rv);
 
         checkoutBtn.setOnClickListener(this);
         mapsIv.setOnClickListener(this);
-
-        restaurant = getRestaurant();
 
         restaurant.setProducts(getProducts());
         restaurantNameTv.setText(restaurant.getName());
@@ -76,12 +79,13 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
         productRv.setAdapter(adapter);
         productRv.setLayoutManager(layoutManager);
 
-        minCheckoutTv.setText(getString(R.string.currency).concat(String.format(Locale.getDefault(),"%.2f",restaurant.getMinOrder())));
+        minOrderTv.setText(getString(R.string.currency).concat(String.format(Locale.getDefault(),"%.2f", restaurant.getMinOrder())));
 
         //initialise stuff at 0
         progressBar.setProgress(0);
+        totalPriceTv.setText(getString(R.string.currency).concat(String.format(Locale.getDefault(),"%.2f",0.0)));
 
-        totalPriceTv.setText(getString(R.string.currency).concat(String.format(Locale.getDefault(),"%.2f",0F)));
+        Glide.with(this).load(restaurant.getImageUrl()).into(restaurantIv);
         //TODO set all the appropriate icons
     }
 
@@ -108,8 +112,18 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    private Restaurant getRestaurant(){
-        return new Restaurant("UNRISTORANTEDAJAVA","via Casalvecchio, 7","description","imgUrl",42,8.4F);
+    private Restaurant getRestaurantFromIntent() {
+        String name = "";
+        String address = "";
+        String imageUrl = "";
+        double minOrder = 0.0;
+        if (getIntent().getExtras() != null) {
+            name = getIntent().getExtras().getString(RESTAURANT_NAME);
+            address = getIntent().getExtras().getString(RESTAURANT_ADDRESS);
+            imageUrl = getIntent().getExtras().getString(RESTAURANT_IMAGE_URL);
+            minOrder = getIntent().getExtras().getDouble(RESTAURANT_MIN_ORDER);
+        }
+        return new Restaurant(name, address, imageUrl, 0, minOrder);
     }
 
     private ArrayList<Product> getProducts(){
