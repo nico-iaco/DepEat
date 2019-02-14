@@ -34,6 +34,9 @@ import com.google.firebase.auth.FirebaseUser;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 
 import static com.alexiusdev.depeat.ui.Utility.*;
@@ -49,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RestaurantAdapter adapter;
     private static final String URL_API_RESTAURANTS = "http://5ba19290ee710f0014dd764c.mockapi.io/api/v1/restaurant";
     private RestController restController;
+
 
     FirebaseUser currentUser;
     RecyclerView restaurantRV;
@@ -163,9 +167,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onResponse(String response) {
         try {
             JSONArray jsonArray = new JSONArray(response);
-            for(int i = 0; i < jsonArray.length(); i++){
+            for(int i = 0; i < jsonArray.length(); i++)
                 restaurants.add(new Restaurant(jsonArray.getJSONObject(i)));
-            }
             adapter.setRestaurants(restaurants);
         } catch (JSONException e) {
             Log.e(TAG,e.getMessage());

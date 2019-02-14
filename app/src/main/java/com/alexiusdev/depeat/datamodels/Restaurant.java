@@ -28,7 +28,12 @@ public class Restaurant {
         imageUrl = jsonRestaurant.getString("image_url");
         rating = Integer.parseInt(jsonRestaurant.getString("rating"));
         minOrder = Double.parseDouble(jsonRestaurant.getString("min_order"));
+<<<<<<< HEAD
         //products = products;
+=======
+        for(int i = 0; i < jsonRestaurant.getJSONArray("products").length(); i++)
+            products.add(new Product(jsonRestaurant.getJSONArray("products").getJSONObject(i)));
+>>>>>>> 605226b... added local json
     }
 
     public void setMinOrder(float minOrder) {
