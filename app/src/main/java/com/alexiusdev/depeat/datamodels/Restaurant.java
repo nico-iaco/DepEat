@@ -10,7 +10,7 @@ public class Restaurant {
     private int rating;
     private double minOrder;
     private ArrayList<Product> products = new ArrayList<>();
-    public static final String END_POINT = "restaurants";
+    public static final String END_POINT = "restaurants/";
 
     public Restaurant(String name, String address, String imageUrl, int rating, double minOrder, ArrayList<Product> products) {
         this.name = name;

@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mAuth = FirebaseAuth.getInstance();
 
-        if(getIntent().getExtras() != null)
+        if(getIntent().getExtras() != null && getIntent().getExtras().getString(EMAIL_KEY) != null)
             showToast(this, getString(R.string.welcome) + " " + getIntent().getExtras().getString(EMAIL_KEY));
 
         restController = new RestController(this);
@@ -120,9 +120,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch(item.getItemId()) {
             case (R.id.login_menu):
                 startActivity(new Intent(this, LoginActivity.class));
-                return true;
-            case (R.id.cart_menu):
-                startActivity(new Intent(this, ShopActivity.class));
                 return true;
             case (R.id.logout_menu):
                 mAuth.signOut();

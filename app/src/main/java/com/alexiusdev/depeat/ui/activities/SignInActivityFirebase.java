@@ -2,38 +2,32 @@ package com.alexiusdev.depeat.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;;
+import android.widget.EditText;
 
 import com.alexiusdev.depeat.R;
-import com.alexiusdev.depeat.datamodels.Restaurant;
 import com.alexiusdev.depeat.datamodels.User;
-import com.alexiusdev.depeat.services.RestController;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.HashMap;
-import java.util.Map;
+import static com.alexiusdev.depeat.ui.Utility.EMAIL_KEY;
+import static com.alexiusdev.depeat.ui.Utility.isValidEmail;
+import static com.alexiusdev.depeat.ui.Utility.showToast;
 
-import static com.alexiusdev.depeat.ui.Utility.*;
+;
 
-public class SignInActivity extends AppCompatActivity implements View.OnClickListener, Response.Listener<String>, Response.ErrorListener{
+public class SignInActivityFirebase extends AppCompatActivity implements View.OnClickListener{
 
     private EditText nameET;
     private EditText surnameET;
@@ -41,12 +35,13 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private EditText passwordET;
     private EditText confirmPasswordET;
     private Button signInBtn;
-    RestController restController;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
+        mAuth = FirebaseAuth.getInstance();
 
         nameET = findViewById(R.id.name_et);
         surnameET = findViewById(R.id.surname_et);
@@ -62,8 +57,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         emailET.addTextChangedListener(signInButtonTextWatcher);
         passwordET.addTextChangedListener(signInButtonTextWatcher);
         confirmPasswordET.addTextChangedListener(signInButtonTextWatcher);
-
-        restController = new RestController(this);
 
         if(isValidEmail(getIntent().getStringExtra(EMAIL_KEY)))
             emailET.setText(getIntent().getStringExtra(EMAIL_KEY));
@@ -99,35 +92,22 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
 
     private void createAccount(final String email, final String password){
-        String registrationEndpoint = "auth/local/register/";
-        Map<String,String> body = new HashMap<>();
-        body.put("username", email);
-        body.put("email", email);
-        body.put("password", password);
-        restController.postRequest(registrationEndpoint, body, this,this);
-    }
-
-    @Override
-    public void onErrorResponse(VolleyError error) {
-        showToast(this, "Wops! Something went wrong!");
-    }
-
-    @Override
-    public void onResponse(String response) {
-        String session ="";
-        String email = "";
-        String id = "";
-        try {
-            JSONObject jsonResponse = new JSONObject(response);
-            session = jsonResponse.getString("jwt");
-            email = jsonResponse.getJSONObject("user").getString("email");
-            id = jsonResponse.getJSONObject("user").getString("_id");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Log.d("postResponse",session);
-        Log.d("postResponse",email);
-        Log.d("postResponse",id);
-        startActivity(new Intent(SignInActivity.this,LoginActivity.class));
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("TAG", "createUserWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            startActivity(new Intent(SignInActivityFirebase.this,LoginActivity.class));
+                            new User(email, nameET.getText().toString(),surnameET.getText().toString());
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w("TAG", "createUserWithEmail:failure", task.getException());
+                            showToast(SignInActivityFirebase.this, "Authentication failed.");
+                        }
+                    }
+                });
     }
 }
