@@ -23,7 +23,6 @@
     <string name="min_checkout_value">VALUE</string>
     <string name="total">Total: </string>
     <string name="total_value">VALUE</string>
-    <string name="quit">Quit</string>
     <string name="forgot_password">Forgot password?</string>
     <string name="wrong_password">Wrong password</string>
     <string name="welcome">Welcome</string>

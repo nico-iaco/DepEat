@@ -80,7 +80,7 @@
                     android:layout_weight="1"
                     android:enabled="false"
                     style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
-                    android:textColor="@color/primary_text"/>
+                    android:textColor="@color/disabled_text"/>
                 <Button
                     android:id="@+id/signin_btn"
                     android:layout_width="wrap_content"

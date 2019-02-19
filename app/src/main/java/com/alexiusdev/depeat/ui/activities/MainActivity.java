@@ -35,17 +35,11 @@ import static com.alexiusdev.depeat.ui.Utility.*;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, Response.Listener<String>, Response.ErrorListener {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private MenuItem logoutMenuItem;
-    private MenuItem loginMenuItem;
-    private MenuItem gridViewMenuItem;
-    private MenuItem cardViewMenuItem;
+    private MenuItem gridViewMenuItem, cardViewMenuItem, profileMenuItem, logoutMenuItem, loginMenuItem;
     private FirebaseAuth mAuth;
     private RecyclerView.LayoutManager layoutManager;
     private RestaurantAdapter adapter;
     private RestController restController;
-    private static final int LOGIN_REQUEST_CODE = 2001;
-    private Menu menu;
-
 
     FirebaseUser currentUser;
     RecyclerView restaurantRV;
@@ -84,13 +78,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         logoutMenuItem = menu.findItem(R.id.logout_menu);
         gridViewMenuItem = menu.findItem(R.id.grid_menu);
         cardViewMenuItem = menu.findItem(R.id.card_menu);
+        profileMenuItem = menu.findItem(R.id.profile_menu);
         if(currentUser == null) {
             loginMenuItem.setVisible(true);
             logoutMenuItem.setVisible(false);
+            profileMenuItem.setVisible(false);
         } else {
             loginMenuItem.setVisible(false);
             logoutMenuItem.setVisible(true);
-        }if(adapter.isGridMode()){
+            profileMenuItem.setVisible(true);
+        }
+
+        if(adapter.isGridMode()){
             cardViewMenuItem.setVisible(true);
             gridViewMenuItem.setVisible(false);
         }else{
@@ -104,30 +103,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main,menu);
-        this.menu = menu;
         return true;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        Log.d(TAG,"requestCode" + requestCode);
-        Log.d(TAG, "resultCode" + resultCode);
-        if(requestCode == LOGIN_REQUEST_CODE && resultCode == RESULT_OK){
-            menu.findItem(R.id.login_menu).setTitle(R.string.profile).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
-                @Override
-                public boolean onMenuItemClick(MenuItem menuItem) {
-                    startActivity(new Intent(MainActivity.this, ProfileActivity.class));
-                    return true;
-                }
-            });
-        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case (R.id.login_menu):
-                startActivityForResult(new Intent(this, LoginActivity.class), LOGIN_REQUEST_CODE);
+                startActivity(new Intent(this, LoginActivity.class));
                 return true;
             case (R.id.logout_menu):
                 mAuth.signOut();
@@ -144,16 +127,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 gridViewMenuItem.setVisible(true);
                 setLayoutManager();
                 return true;
+            case (R.id.profile_menu):
+                startActivity(new Intent(this, ProfileActivity.class));
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onClick(View view) {
-    }
-
-    private ArrayList<Restaurant> getRestaurants(){
-        return restaurants;
     }
 
     private void setLayoutManager(){
@@ -171,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onResponse(String response) {
+        Log.d(TAG,response);
         try {
             JSONArray jsonArray = new JSONArray(response);
             for(int i = 0; i < jsonArray.length(); i++)

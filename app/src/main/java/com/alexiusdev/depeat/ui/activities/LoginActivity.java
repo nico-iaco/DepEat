@@ -3,12 +3,8 @@ package com.alexiusdev.depeat.ui.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,37 +12,37 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import com.alexiusdev.depeat.R;
-import com.alexiusdev.depeat.datamodels.Restaurant;
-import com.alexiusdev.depeat.services.RestController;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
+import static com.alexiusdev.depeat.ui.Utility.*;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.HashMap;
-import java.util.Map;
+import static com.alexiusdev.depeat.ui.Utility.EMAIL_KEY;
+import static com.alexiusdev.depeat.ui.Utility.isValidEmail;
+import static com.alexiusdev.depeat.ui.Utility.showToast;
 
-import static com.alexiusdev.depeat.ui.Utility.*;
-
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener, Response.Listener<String>, Response.ErrorListener {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button loginBtn, signinBtn, forgotPasswordBtn;
     private EditText emailET, passwordET;
     private TextView creditsTV, versionTV;
-    public static final int MIN_LENGTH_PSW = 6;
-    RestController restController;
+    private FirebaseAuth mAuth;
+    FirebaseUser currentUser;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        mAuth = FirebaseAuth.getInstance();
+
         loginBtn = findViewById(R.id.login_btn);
         signinBtn = findViewById(R.id.signin_btn);
         forgotPasswordBtn = findViewById(R.id.forgot_password_btn);
@@ -63,9 +59,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         emailET.addTextChangedListener(loginButtonTextWatcher);
         passwordET.addTextChangedListener(loginButtonTextWatcher);
-        restController = new RestController(this);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        //Check if user is signed in (non-null) and update UI accordingly.
+        currentUser = mAuth.getCurrentUser();
+        if (currentUser != null){
+            setResult(RESULT_OK);
+            finish();
+        }
+    }
 
     @Override
     public void onClick(View view) {
@@ -74,7 +79,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 login(emailET.getText().toString(), passwordET.getText().toString());
                 break;
             case R.id.signin_btn:
-                startActivity(new Intent(LoginActivity.this, SignInActivity.class).putExtra(EMAIL_KEY,emailET.getText().toString()));
+                startActivity(new Intent(LoginActivity.this, SignInActivity.class)
+                        .putExtra(EMAIL_KEY,emailET.getText().toString()));
                 break;
             case R.id.credits_tv:
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Alexius33/")));
@@ -83,6 +89,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 //TODO implement a changelog?
                 break;
             case R.id.forgot_password_btn:
+                passwordReset();
                 break;
         }
     }
@@ -97,15 +104,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
-            case (R.id.quit_menu):
-                finish();
-                System.exit(0);
-                return true;
+            case (R.id.forgot_password_menu):
+                if(!emailET.getText().toString().isEmpty())
+                    passwordReset();
+                else
+                    showToast(this,"Please insert email first.");
         }
-
         return super.onOptionsItemSelected(item);
     }
-
 
     private TextWatcher loginButtonTextWatcher = new TextWatcher() {
         @Override
@@ -114,47 +120,44 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
         @Override
         public void afterTextChanged(Editable editable) {
-            loginBtn.setEnabled(isValidEmail(emailET.getText().toString()) &&   //enable button only if the mail is valid and
-                    passwordET.getText().toString().length() >= MIN_LENGTH_PSW);    //the password length is greater or equal to MIN_LENGTH_PSW
-            loginBtn.setTextColor(isValidEmail(emailET.getText().toString()) &&   //enable button only if the mail is valid and
-                    passwordET.getText().toString().length() >= MIN_LENGTH_PSW ?
-                    getResources().getColor(R.color.primary_text) : getResources().getColor(R.color.secondary_text));
+            boolean check = isValidEmail(emailET.getText().toString()) &&   //enable button only if the mail is valid and
+                    passwordET.getText().toString().length() >= MIN_LENGTH_PSW;    //password is longer than threshold
+            loginBtn.setEnabled(check);    //the password length is greater or equal to MIN_LENGTH_PSW
+            int colour = check ? getApplication().getResources().getColor(R.color.primary_text) : getApplication().getResources().getColor(R.color.disabled_text);
+            loginBtn.setTextColor(colour);
         }
     };
 
-    private void login(String email, String password) {
-        String loginEndpoint = "auth/local/";
-        Map<String,String> body = new HashMap<>();
-        body.put("identifier", email);
-        body.put("password", password);
-        restController.postRequest(loginEndpoint, body,this,this);
+     void login(final String email, final String password) {
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            //Sign in success, update UI with the signed-in user's information
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            showToast(LoginActivity.this,getString(R.string.welcome).concat(" " + user.getEmail()));
+                            setResult(RESULT_OK);
+                            finish();
+                        } else {
+                            //If sign in fails, display a message to the user.
+                            passwordET.setText("");
+                            showToast(LoginActivity.this,getString(R.string.wrong_password));
+                            forgotPasswordBtn.setVisibility(View.VISIBLE);
+                            setResult(RESULT_CANCELED);
+                        }
+                    }
+                });
     }
 
-    @Override
-    public void onErrorResponse(VolleyError error) {
-        showToast(this, "Wops! Something went wrong!");
-        //Log.d("postResponse",error.getMessage());
-    }
-
-    @Override
-    public void onResponse(String response) {
-        String session ="";
-        String email = "";
-        String id = "";
-        try {
-            JSONObject jsonResponse = new JSONObject(response);
-            session = jsonResponse.getString("jwt");
-            email = jsonResponse.getJSONObject("user").getString("email");
-            id = jsonResponse.getJSONObject("user").getString("_id");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Log.d("postResponseSession",session);
-        Log.d("postResponseEmail",email);
-        Log.d("postResponseId",id);
-        //startActivity(new Intent(LoginActivity.this,MainActivity.class).putExtra(EMAIL_KEY,emailET.getText().toString()));
-
-        setResult(RESULT_OK);
-        finish();
+    private void passwordReset(){
+        mAuth.sendPasswordResetEmail(emailET.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>(){
+            @Override
+            public void onComplete(@NonNull Task<Void> task){
+                if(task.isSuccessful())
+                    showToast(LoginActivity.this,getString(R.string.forgot_password_toast));
+                else
+                    showToast(LoginActivity.this,getString(R.string.error));
+            }
+        });
     }
 }

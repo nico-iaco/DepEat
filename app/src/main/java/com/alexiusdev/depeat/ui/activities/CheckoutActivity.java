@@ -16,6 +16,8 @@ import static com.alexiusdev.depeat.ui.Utility.*;
 
 import com.alexiusdev.depeat.datamodels.Product;
 import com.alexiusdev.depeat.ui.adapters.CheckoutAdapter;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,8 +29,6 @@ public class CheckoutActivity extends AppCompatActivity implements View.OnClickL
     private CheckoutAdapter adapter;
     private ArrayList<Product> products;
     private RecyclerView checkoutRv;
-
-
 
 
     @SuppressWarnings({"unchecked","ConstantConditions"})

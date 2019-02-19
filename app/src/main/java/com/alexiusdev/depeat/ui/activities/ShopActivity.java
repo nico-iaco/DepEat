@@ -70,7 +70,6 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
         checkoutBtn.setOnClickListener(this);
         mapsIv.setOnClickListener(this);
 
-
         restaurantNameTv.setText(restaurant.getName());
         restaurantAddressTv.setText(restaurant.getAddress());
         progressBar.setMax((int)restaurant.getMinOrder() * 100);
@@ -89,10 +88,6 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
         totalPriceTv.setText(getString(R.string.currency).concat(String.format(Locale.getDefault(),"%.2f",0.0)));
 
         Glide.with(this).load(restaurant.getImageUrl()).into(restaurantIv);
-        //TODO set all the appropriate icons
-
-
-
 
         if(restaurant.getProducts().isEmpty()){
             nothingRl.setVisibility(View.VISIBLE);
@@ -111,17 +106,22 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch(view.getId()){
             case (R.id.checkout_btn):
-                if(currentUser != null) {
+                if(currentUser == null) {
                     showToast(this, getString(R.string.login_required));
-                    startActivity(new Intent(this, LoginActivity.class));
+                    startActivityForResult(new Intent(this, LoginActivity.class), LOGIN_REQUEST_CODE);
                 } else
-                    startActivity(new Intent(this, CheckoutActivity.class)
-                            .putExtra(RESTAURANT_NAME, restaurant.getName())
-                            .putExtra(RESTAURANT_PRODUCTS, restaurant.getProducts())
-                            .putExtra(PRICE, total));
+                    startCheckoutActivity();
                 break;
             case (R.id.maps_iv):
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/search/?api=1&query=".concat(Uri.encode(restaurantAddressTv.getText().toString())))));
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == LOGIN_REQUEST_CODE && resultCode == RESULT_OK){
+            startCheckoutActivity();
         }
     }
 
@@ -163,5 +163,12 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
     public void enableCheckout(double total){
         checkoutBtn.setEnabled(total >= restaurant.getMinOrder());
         checkoutBtn.setTextColor(total >= restaurant.getMinOrder() ? getResources().getColor(R.color.primary_text) : getResources().getColor(R.color.secondary_text));
+    }
+
+    private void startCheckoutActivity(){
+        startActivity(new Intent(this, CheckoutActivity.class)
+                .putExtra(RESTAURANT_NAME, restaurant.getName())
+                .putExtra(RESTAURANT_PRODUCTS, restaurant.getProducts())
+                .putExtra(PRICE, total));
     }
 }

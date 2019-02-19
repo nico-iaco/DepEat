@@ -12,6 +12,9 @@ public class Utility {
     public static final String RESTAURANT_MIN_ORDER = "restaurantMinOrder";
     public static final String RESTAURANT_PRODUCTS = "restaurantProducts";
     public static final String PRICE = "price";
+    public static final int MIN_LENGTH_PSW = 6;
+    public static final int LOGIN_REQUEST_CODE = 2001;
+    public static final int SIGNIN_REQUEST_CODE = 2002;
 
     public static boolean isValidEmail(String emailStr) {
         return Patterns.EMAIL_ADDRESS.matcher(emailStr).matches();
