@@ -111,18 +111,21 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch(view.getId()){
             case (R.id.checkout_btn):
-                if(currentUser == null) {
+                if(currentUser != null) {
                     showToast(this, getString(R.string.login_required));
                     startActivity(new Intent(this, LoginActivity.class));
                 } else
-                    startActivity(new Intent(this, CheckoutActivity.class));
+                    startActivity(new Intent(this, CheckoutActivity.class)
+                            .putExtra(RESTAURANT_NAME, restaurant.getName())
+                            .putExtra(RESTAURANT_PRODUCTS, restaurant.getProducts())
+                            .putExtra(PRICE, total));
                 break;
             case (R.id.maps_iv):
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/search/?api=1&query=".concat(Uri.encode(restaurantAddressTv.getText().toString())))));
         }
     }
 
-
+    @SuppressWarnings("unchecked")
     private Restaurant getRestaurantFromIntent() {
         String name = "";
         String address = "";

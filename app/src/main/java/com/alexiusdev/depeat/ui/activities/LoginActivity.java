@@ -106,6 +106,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         return super.onOptionsItemSelected(item);
     }
 
+
     private TextWatcher loginButtonTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
@@ -151,6 +152,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Log.d("postResponseSession",session);
         Log.d("postResponseEmail",email);
         Log.d("postResponseId",id);
-        startActivity(new Intent(LoginActivity.this,MainActivity.class).putExtra(EMAIL_KEY,emailET.getText().toString()));
+        //startActivity(new Intent(LoginActivity.this,MainActivity.class).putExtra(EMAIL_KEY,emailET.getText().toString()));
+
+        setResult(RESULT_OK);
+        finish();
     }
 }

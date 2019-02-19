@@ -1,11 +1,17 @@
 package com.alexiusdev.depeat.ui.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.alexiusdev.depeat.R;
+import com.alexiusdev.depeat.datamodels.Product;
+
+import java.util.ArrayList;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,10 +19,13 @@ import androidx.recyclerview.widget.RecyclerView;
 public class CheckoutAdapter extends RecyclerView.Adapter {
     private LayoutInflater inflater;
     private Context context;
+    private ArrayList<Product> products;
 
-    public CheckoutAdapter(Context context) {
+    public CheckoutAdapter(Context context, ArrayList<Product> products) {
         inflater = LayoutInflater.from(context);
         this.context = context;
+        this.products = products;
+        Log.d("adapter constructor", products.toString());
     }
 
     @NonNull
@@ -27,25 +36,30 @@ public class CheckoutAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int index) {
+        Product product = products.get(index);
+        CheckoutViewHolder checkoutViewHolder = (CheckoutViewHolder) viewHolder;
 
+        checkoutViewHolder.quantityTv.setText(String.valueOf(product.getQuantity()).concat("x"));
+        checkoutViewHolder.nameTv.setText(product.getName());
+        checkoutViewHolder.priceTv.setText(context.getString(R.string.currency).concat(String.format(Locale.getDefault(),"%.2f",product.getPrice())));
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return products.size();
     }
 
 
 
-
     private class CheckoutViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-
-
-
+        private TextView quantityTv, nameTv, priceTv;
 
         public CheckoutViewHolder(@NonNull View itemView) {
             super(itemView);
+            quantityTv = itemView.findViewById(R.id.item_checkout_qty);
+            nameTv = itemView.findViewById(R.id.item_checkout_name);
+            priceTv = itemView.findViewById(R.id.item_checkout_price);
         }
 
         @Override

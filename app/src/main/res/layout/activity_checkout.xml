@@ -36,32 +36,32 @@
         android:id="@+id/product_rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/address_tv"
+        android:layout_below="@id/name_tv"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp">
     </androidx.recyclerview.widget.RecyclerView>
 
     <View
-        android:id="@+id/bottom_divider"
-        style="@style/Divider"
-        android:layout_below="@id/product_rv"/>
+android:id="@+id/bottom_divider"
+style="@style/Divider"
+android:layout_below="@id/product_rv"/>
 
-    <TextView
-        android:id="@+id/price_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="Total: €3"
-        android:text="@string/total"
-        android:layout_below="@id/bottom_divider"
-        android:textColor="@color/primary_text"
-        style="@style/TextAppearance.AppCompat.Title"/>
-    <Button
-        android:id="@+id/pay_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/pay"
-        android:layout_alignParentBottom="true"
-        style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
-        android:textColor="@color/primary_text"
-        android:enabled="true"/>
-</RelativeLayout>
+<TextView
+android:id="@+id/price_tv"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+tools:text="Total: €3"
+android:text="@string/total"
+android:layout_below="@id/bottom_divider"
+android:textColor="@color/primary_text"
+style="@style/TextAppearance.AppCompat.Title"/>
+<Button
+android:id="@+id/pay_btn"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:text="@string/pay"
+android:layout_alignParentBottom="true"
+style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+android:textColor="@color/primary_text"
+android:enabled="true"/>
+    </RelativeLayout>

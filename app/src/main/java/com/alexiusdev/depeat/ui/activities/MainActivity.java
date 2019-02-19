@@ -18,15 +18,10 @@ import android.view.View;
 import com.alexiusdev.depeat.R;
 import com.alexiusdev.depeat.datamodels.Restaurant;
 import com.alexiusdev.depeat.services.RestController;
-import com.alexiusdev.depeat.ui.Utility;
 import com.alexiusdev.depeat.ui.adapters.RestaurantAdapter;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -34,9 +29,6 @@ import com.google.firebase.auth.FirebaseUser;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.ArrayList;
 
 import static com.alexiusdev.depeat.ui.Utility.*;
@@ -50,8 +42,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FirebaseAuth mAuth;
     private RecyclerView.LayoutManager layoutManager;
     private RestaurantAdapter adapter;
-    private static final String URL_API_RESTAURANTS = "http://5ba19290ee710f0014dd764c.mockapi.io/api/v1/restaurant";
     private RestController restController;
+    private static final int LOGIN_REQUEST_CODE = 2001;
+    private Menu menu;
 
 
     FirebaseUser currentUser;
@@ -111,15 +104,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main,menu);
+        this.menu = menu;
         return true;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        Log.d(TAG,"requestCode" + requestCode);
+        Log.d(TAG, "resultCode" + resultCode);
+        if(requestCode == LOGIN_REQUEST_CODE && resultCode == RESULT_OK){
+            menu.findItem(R.id.login_menu).setTitle(R.string.profile).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                    return true;
+                }
+            });
+        }
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case (R.id.login_menu):
-                startActivity(new Intent(this, LoginActivity.class));
+                startActivityForResult(new Intent(this, LoginActivity.class), LOGIN_REQUEST_CODE);
                 return true;
             case (R.id.logout_menu):
                 mAuth.signOut();
@@ -157,6 +165,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onErrorResponse(VolleyError error) {
+        //error.networkResponse.statusCode
         showToast(this,error.getMessage());
     }
 
