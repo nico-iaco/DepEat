@@ -6,10 +6,14 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class Restaurant {
-    private String name, address, imageUrl;
+    private String name, address, imageUrl, id;
     private int rating;
     private double minOrder;
     private ArrayList<Product> products = new ArrayList<>();
+
+    public Restaurant() {
+    }
+
     public static final String END_POINT = "restaurants";
 
     public Restaurant(String name, String address, String imageUrl, int rating, double minOrder, ArrayList<Product> products) {
@@ -22,6 +26,7 @@ public class Restaurant {
     }
 
     public Restaurant(JSONObject jsonRestaurant) throws JSONException {
+        id = jsonRestaurant.getString("id");
         name = jsonRestaurant.getString("name");
         address = jsonRestaurant.getString("address");
         imageUrl = jsonRestaurant.getString("image_url");
@@ -89,5 +94,13 @@ public class Restaurant {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

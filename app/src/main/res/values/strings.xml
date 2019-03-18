@@ -37,6 +37,7 @@
     <string name="pay">Pay</string>
     <string name="nothing">Wops! Nothing to show here.</string>
     <string name="profile">Profile</string>
+    <string name="session_id_key">DepEatSessionIdKey</string>
 
 
 

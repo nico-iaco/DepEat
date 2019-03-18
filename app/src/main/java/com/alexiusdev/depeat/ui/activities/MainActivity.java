@@ -14,6 +14,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.alexiusdev.depeat.R;
 import com.alexiusdev.depeat.datamodels.Restaurant;
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView.LayoutManager layoutManager;
     private RestaurantAdapter adapter;
     private RestController restController;
+    private RelativeLayout loadingPanel;
 
     FirebaseUser currentUser;
     RecyclerView restaurantRV;
@@ -52,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         restaurantRV = findViewById(R.id.restaurant_rv);
+        loadingPanel = findViewById(R.id.loadingPanel);
         restaurantRV.setLayoutManager(new LinearLayoutManager(this));
         adapter = new RestaurantAdapter(this);
         restaurantRV.setAdapter(adapter);
@@ -63,6 +67,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         restController = new RestController(this);
         restController.getRequest(Restaurant.END_POINT,this,this);
+
+
+       /*try {
+            for(int i = 0; i < restController.readFromDB().length(); i++) {
+                restaurants.add(new Restaurant(restController.readFromDB().getJSONObject(i)));
+            }
+            adapter.setRestaurants(restaurants);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }*/
+
     }
 
     @Override
@@ -147,8 +162,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        //error.networkResponse.statusCode
+
         showToast(this,error.getMessage());
+        Log.d("error", error.getMessage());
     }
 
     @Override
@@ -162,5 +178,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (JSONException e) {
             Log.e(TAG,e.getMessage());
         }
+        loadingPanel.setVisibility(View.GONE);
+        restaurantRV.setVisibility(View.VISIBLE);
     }
+
+
 }

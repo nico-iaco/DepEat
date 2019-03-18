@@ -8,8 +8,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="vertical">
+
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -48,14 +49,25 @@
                 android:layout_height="wrap_content"
                 android:text="@string/password"
                 android:textColor="@color/primary_text"/>
-            <EditText
-                android:id="@+id/password_et"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/password_hint"
-                android:inputType="textPassword"
-                android:autofillHints=".AUTOFILL_HINT_PASSWORD"
-                android:importantForAutofill="yes"/>
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/password_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/password_hint"
+                    android:inputType="textPassword"
+                    android:autofillHints=".AUTOFILL_HINT_PASSWORD"
+                    android:importantForAutofill="yes"/>
+                <Button
+                    android:id="@+id/visibility_btn"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="right|center_vertical"
+                    android:layout_marginRight="8dp"
+                    android:background="@drawable/ic_visibility_black_24dp"/>
+            </FrameLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -79,16 +91,16 @@
                     android:text="@string/login"
                     android:layout_weight="1"
                     android:enabled="false"
-                    style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
-                    android:textColor="@color/disabled_text"/>
+                    android:textColor="@color/disabled_text"
+                    android:backgroundTint="@color/white"/>
                 <Button
                     android:id="@+id/signin_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/sign_in"
                     android:layout_weight="1"
-                    style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
-                    android:textColor="@color/primary_text"/>
+                    android:textColor="@color/primary_text"
+                    android:backgroundTint="@color/white"/>
             </LinearLayout>
             <Button
                 android:id="@+id/forgot_password_btn"
@@ -96,7 +108,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/forgot_password"
                 android:visibility="gone"
-                android:textColor="@color/primary_text"/>
+                android:textColor="@color/primary_text"
+                android:backgroundTint="@color/white"/>
         </LinearLayout>
     </LinearLayout>
 

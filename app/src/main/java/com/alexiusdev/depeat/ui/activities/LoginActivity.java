@@ -1,13 +1,20 @@
 package com.alexiusdev.depeat.ui.activities;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,11 +22,22 @@ import android.widget.TextView;
 
 import com.alexiusdev.depeat.R;
 import static com.alexiusdev.depeat.ui.Utility.*;
+
+import com.alexiusdev.depeat.services.RestController;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,19 +47,27 @@ import static com.alexiusdev.depeat.ui.Utility.EMAIL_KEY;
 import static com.alexiusdev.depeat.ui.Utility.isValidEmail;
 import static com.alexiusdev.depeat.ui.Utility.showToast;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener/*, Response.ErrorListener, Response.Listener<String>*/ {
 
-    private Button loginBtn, signinBtn, forgotPasswordBtn;
+    private Button loginBtn, signinBtn, forgotPasswordBtn, visibilityBtn;
     private EditText emailET, passwordET;
     private TextView creditsTV, versionTV;
     private FirebaseAuth mAuth;
     FirebaseUser currentUser;
+    SharedPreferences sharedPref;
+    SharedPreferences.Editor editor;
+    RestController restController;
+    private boolean isVisible = false;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         mAuth = FirebaseAuth.getInstance();
+        restController = new RestController(this);
+
+        sharedPref = this.getPreferences(Context.MODE_PRIVATE);
 
         loginBtn = findViewById(R.id.login_btn);
         signinBtn = findViewById(R.id.signin_btn);
@@ -50,15 +76,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         passwordET = findViewById(R.id.password_et);
         creditsTV = findViewById(R.id.credits_tv);
         versionTV = findViewById(R.id.version_tv);
+        visibilityBtn = findViewById(R.id.visibility_btn);
+        visibilityBtn.setBackground(getDrawable(R.drawable.ic_visibility_black_24dp));
 
         loginBtn.setOnClickListener(this);
         signinBtn.setOnClickListener(this);
         creditsTV.setOnClickListener(this);
         versionTV.setOnClickListener(this);
         forgotPasswordBtn.setOnClickListener(this);
+        visibilityBtn.setOnClickListener(this);
+
 
         emailET.addTextChangedListener(loginButtonTextWatcher);
         passwordET.addTextChangedListener(loginButtonTextWatcher);
+
     }
 
     @Override
@@ -75,6 +106,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View view) {
         switch(view.getId()){
+            case R.id.visibility_btn:
+                if(!isVisible){
+                    visibilityBtn.setBackground(getDrawable(R.drawable.ic_visibility_off_black_24dp));
+                    passwordET.setInputType(InputType.TYPE_CLASS_TEXT);
+                }else{
+                    visibilityBtn.setBackground(getDrawable(R.drawable.ic_visibility_black_24dp));
+                    passwordET.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                }
+                isVisible = !isVisible;
+                passwordET.setTypeface(Typeface.DEFAULT);
+                break;
             case R.id.login_btn:
                 login(emailET.getText().toString(), passwordET.getText().toString());
                 break;
@@ -129,35 +171,62 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     };
 
      void login(final String email, final String password) {
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            //Sign in success, update UI with the signed-in user's information
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            showToast(LoginActivity.this,getString(R.string.welcome).concat(" " + user.getEmail()));
-                            setResult(RESULT_OK);
-                            finish();
-                        } else {
-                            //If sign in fails, display a message to the user.
-                            passwordET.setText("");
-                            showToast(LoginActivity.this,getString(R.string.wrong_password));
-                            forgotPasswordBtn.setVisibility(View.VISIBLE);
-                            setResult(RESULT_CANCELED);
-                        }
-                    }
-                });
-    }
-
-    private void passwordReset(){
-        mAuth.sendPasswordResetEmail(emailET.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>(){
-            @Override
-            public void onComplete(@NonNull Task<Void> task){
-                if(task.isSuccessful())
-                    showToast(LoginActivity.this,getString(R.string.forgot_password_toast));
-                else
-                    showToast(LoginActivity.this,getString(R.string.error));
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, task -> {
+            if (task.isSuccessful()) {
+                //Sign in success, update UI with the signed-in user's information
+                FirebaseUser user = mAuth.getCurrentUser();
+                showToast(LoginActivity.this,getString(R.string.welcome).concat(" " + user.getEmail()));
+                setResult(RESULT_OK);
+                finish();
+            } else {
+                //If sign in fails, display a message to the user.
+                passwordET.setText("");
+                showToast(LoginActivity.this,getString(R.string.wrong_password));
+                forgotPasswordBtn.setVisibility(View.VISIBLE);
+                setResult(RESULT_CANCELED);
             }
         });
     }
+     /*void login(final String email, final String password){
+         String endPoint = "auth/local/";
+         Map<String, String> mapBody = new HashMap<>();
+             mapBody.put("identifier", email);
+             mapBody.put("password", password);
+         JSONObject body = new JSONObject(mapBody);
+         restController.postRequest(endPoint, body,this,this);
+
+
+
+     }*/
+
+    private void passwordReset(){
+        mAuth.sendPasswordResetEmail(emailET.getText().toString()).addOnCompleteListener(task -> {
+            if(task.isSuccessful())
+                showToast(LoginActivity.this,getString(R.string.forgot_password_toast));
+            else
+                showToast(LoginActivity.this,getString(R.string.error));
+        });
+    }
+/*
+    @Override
+    public void onErrorResponse(VolleyError error) {
+
+    }
+
+    @Override
+    public void onResponse(String response) {
+        try {
+            JSONObject jsonObject= new JSONObject(response);
+
+            //TODO GET SESSION ID FROM RESPONSE
+            String session = jsonObject.getString("jwt");
+
+            editor = sharedPref.edit();
+            editor.putString(getString(R.string.session_id_key),session);
+            Log.d("sessionID",session);
+            editor.apply();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }*/
 }

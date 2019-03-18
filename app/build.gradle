@@ -17,22 +17,30 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.1.0-alpha02'
-    implementation 'androidx.media:media:1.1.0-alpha01'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'androidx.appcompat:appcompat:1.1.0-alpha03'
+    implementation 'androidx.media:media:1.1.0-alpha02'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha02'
-    implementation 'com.google.android.material:material:1.0.0'
-    implementation 'com.google.firebase:firebase-auth:16.1.0'
-    implementation 'com.google.firebase:firebase-core:16.0.7'
-    implementation 'com.google.firebase:firebase-database:16.0.6'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha03'
+    implementation 'com.google.android.material:material:1.1.0-alpha04'
+    implementation 'com.google.firebase:firebase-auth:16.2.0'
+    implementation 'com.google.firebase:firebase-core:16.0.8'
+    implementation 'com.google.firebase:firebase-database:16.1.0'
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     implementation 'com.android.volley:volley:1.1.1'
+
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.2-alpha01'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.2-alpha01'
+    androidTestImplementation 'androidx.test:runner:1.1.2-alpha02'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0-alpha02'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
+    //ROOM DB
+    implementation 'android.arch.persistence.room:runtime:' + rootProject.archRoomVersion
+    annotationProcessor 'android.arch.persistence.room:compiler:' + rootProject.archRoomVersion
 }

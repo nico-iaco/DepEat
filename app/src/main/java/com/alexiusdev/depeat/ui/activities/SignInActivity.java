@@ -11,21 +11,27 @@ import android.widget.EditText;
 
 import com.alexiusdev.depeat.R;
 import com.alexiusdev.depeat.datamodels.User;
+import com.alexiusdev.depeat.services.RestController;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import androidx.annotation.NonNull;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import static com.alexiusdev.depeat.ui.Utility.*;
 
-;
 
-public class SignInActivity extends AppCompatActivity implements View.OnClickListener{
+public class SignInActivity extends AppCompatActivity implements View.OnClickListener/*, Response.Listener<String>, Response.ErrorListener*/ {
 
     private EditText nameET;
     private EditText surnameET;
@@ -69,7 +75,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-
     private TextWatcher signInButtonTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
@@ -89,27 +94,39 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         }
     };
 
-
-
-
-
     private void createAccount(final String email, final String password){
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            //Sign in success, update UI with the signed-in user's information
-                            Log.d("TAG", "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            new User(email, nameET.getText().toString(), surnameET.getText().toString());
-                            finish();
-                        } else {
-                            //If sign in fails, display a message to the user
-                            Log.w("TAG", "createUserWithEmail:failure", task.getException());
-                            showToast(SignInActivity.this, "Authentication failed.");
-                        }
-                    }
-                });
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, task -> {
+            if (task.isSuccessful()) {
+                //Sign in success, update UI with the signed-in user's information
+                Log.d("TAG", "createUserWithEmail:success");
+                FirebaseUser user = mAuth.getCurrentUser();
+                new User(email,"", nameET.getText().toString(), surnameET.getText().toString());
+                finish();
+            } else {
+                //If sign in fails, display a message to the user
+                Log.w("TAG", "createUserWithEmail:failure", task.getException());
+                showToast(SignInActivity.this, "Authentication failed.");
+            }
+        });
+/*
+
+        RestController restController = new RestController(this);
+        String endPoint = "auth/local/register/";
+        Map<String, String> mapBody = new HashMap<>();
+        mapBody.put("username",email);
+        mapBody.put("email", email);
+        mapBody.put("password", password);
+        JSONObject body = new JSONObject(mapBody);
+        restController.postRequest(endPoint,body,this,this);*/
+    }
+
+    /*@Override
+    public void onErrorResponse(VolleyError error) {
 
     }
+
+    @Override
+    public void onResponse(String response) {
+
+    }*/
 }

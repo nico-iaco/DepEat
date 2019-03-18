@@ -1,14 +1,16 @@
 package com.alexiusdev.depeat.datamodels;
 
 public class User {
-    private String email;
-    private String name;
-    private String surname;
+    private String email, id, name, surname;
 
-    public User(String email, String name, String surname) {
+    public User() {
+    }
+
+    public User(String email, String id, String name, String surname) {
         this.email = email;
         this.name = name;
         this.surname = surname;
+        this.id = id;
     }
 
     public String getName() {
@@ -33,5 +35,13 @@ public class User {
 
     public void setSurname(String surname) {
         this.surname = surname;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

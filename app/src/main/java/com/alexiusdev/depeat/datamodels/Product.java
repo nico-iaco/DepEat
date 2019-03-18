@@ -4,9 +4,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Product implements Serializable {
-    private String name, ingredients, imageUrl;
+    private String name, ingredients, imageUrl, id, restaurantId;
     private int quantity;
     private double price;
 
@@ -18,10 +20,12 @@ public class Product implements Serializable {
 
     public Product(JSONObject jsonProduct) throws JSONException {
         this.name = jsonProduct.getString("name");
+        this.restaurantId = jsonProduct.getString("restaurant");
         this.ingredients = jsonProduct.getString("ingredients");
         this.imageUrl = jsonProduct.getString("image_url");
         this.quantity = 0;
         this.price = jsonProduct.getDouble("price");
+        this.id = jsonProduct.getString("id");
     }
 
     public String getName() {
@@ -77,6 +81,25 @@ public class Product implements Serializable {
         this.price = price;
     }
 
+    public Product() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getRestaurantId() {
+        return restaurantId;
+    }
+
+    public void setRestaurantId(String restaurantId) {
+        this.restaurantId = restaurantId;
+    }
+
     @Override
     public String toString() {
         return "Product{" +
@@ -86,5 +109,12 @@ public class Product implements Serializable {
                 ", quantity=" + quantity +
                 ", price=" + price +
                 '}';
+    }
+
+    public JSONObject toJSONObject(){
+        Map<String,String> map = new HashMap<>();
+        map.put("id",id);
+        map.put("quantity",String.valueOf(quantity));
+        return new JSONObject(map);
     }
 }

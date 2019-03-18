@@ -15,6 +15,8 @@ public class Utility {
     public static final int MIN_LENGTH_PSW = 6;
     public static final int LOGIN_REQUEST_CODE = 2001;
     public static final int SIGNIN_REQUEST_CODE = 2002;
+    public static final int DEFAULT_PREFERENCES_INT = -1;
+    public static final String DEFAULT_PREFERENCES_STRING = "";
 
     public static boolean isValidEmail(String emailStr) {
         return Patterns.EMAIL_ADDRESS.matcher(emailStr).matches();
