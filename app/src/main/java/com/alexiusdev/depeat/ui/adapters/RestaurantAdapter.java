@@ -1,10 +1,7 @@
 package com.alexiusdev.depeat.ui.adapters;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,15 +9,23 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.alexiusdev.depeat.R;
 import com.alexiusdev.depeat.datamodels.Restaurant;
-import static com.alexiusdev.depeat.ui.Utility.*;
 import com.alexiusdev.depeat.ui.activities.ShopActivity;
 import com.bumptech.glide.Glide;
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 import java.util.Locale;
+
+import static com.alexiusdev.depeat.ui.Utility.RESTAURANT_ADDRESS;
+import static com.alexiusdev.depeat.ui.Utility.RESTAURANT_ID;
+import static com.alexiusdev.depeat.ui.Utility.RESTAURANT_IMAGE_URL;
+import static com.alexiusdev.depeat.ui.Utility.RESTAURANT_MIN_ORDER;
+import static com.alexiusdev.depeat.ui.Utility.RESTAURANT_NAME;
 
 public class RestaurantAdapter extends RecyclerView.Adapter {
     private LayoutInflater inflater;
@@ -95,7 +100,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter {
                         .putExtra(RESTAURANT_ADDRESS, restaurants.get(getAdapterPosition()).getAddress())
                         .putExtra(RESTAURANT_IMAGE_URL, restaurants.get(getAdapterPosition()).getImageUrl())
                         .putExtra(RESTAURANT_MIN_ORDER, restaurants.get(getAdapterPosition()).getMinOrder())
-                        .putExtra(RESTAURANT_PRODUCTS, restaurants.get(getAdapterPosition()).getProducts()));
+                        .putExtra(RESTAURANT_ID, restaurants.get(getAdapterPosition()).getId()));
             }
         }
     }

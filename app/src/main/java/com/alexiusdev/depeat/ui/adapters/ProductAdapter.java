@@ -1,34 +1,31 @@
 package com.alexiusdev.depeat.ui.adapters;
 
 import android.content.Context;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.alexiusdev.depeat.R;
 import com.alexiusdev.depeat.datamodels.Product;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
     private LayoutInflater inflater;
     private Context context;
-    private ArrayList<Product> products;
+    private List<Product> products;
     private OnQuantityChangedListener onQuantityChangedListener;
 
-    public ProductAdapter(Context context, ArrayList<Product> products) {
+    public ProductAdapter(Context context, List<Product> products) {
         inflater = LayoutInflater.from(context);
         this.products = products;
         this.context = context;
@@ -69,6 +66,12 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public void setOnQuantityChangedListener(OnQuantityChangedListener onQuantityChangedListener) {
         this.onQuantityChangedListener = onQuantityChangedListener;
+    }
+
+    public void setProducts(ArrayList<Product> products) {
+        //fixme unable to show products
+        this.products = products;
+        notifyDataSetChanged();
     }
 
     public class ProductViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

@@ -8,9 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Product implements Serializable {
-    private String name, ingredients, imageUrl, id, restaurantId;
+    private String name, ingredients, imageUrl, id;
     private int quantity;
     private double price;
+
+    public Product() {
+    }
 
     public Product(String name, int quantity, double price) {
         this.name = name;
@@ -19,85 +22,75 @@ public class Product implements Serializable {
     }
 
     public Product(JSONObject jsonProduct) throws JSONException {
+        this.id = jsonProduct.getString("id");
         this.name = jsonProduct.getString("name");
-        this.restaurantId = jsonProduct.getString("restaurant");
         this.ingredients = jsonProduct.getString("ingredients");
-        this.imageUrl = jsonProduct.getString("image_url");
+        this.imageUrl = jsonProduct.getString("imageUrl");
         this.quantity = 0;
         this.price = jsonProduct.getDouble("price");
-        this.id = jsonProduct.getString("id");
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public Product setName(String name) {
         this.name = name;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(float price) {
-        this.price = price;
-    }
-
-    public void increaseQuantity(){
-        this.quantity++;
-    }
-
-    public void decreaseQuantity(){
-        if(quantity == 0) return;
-        this.quantity--;
+        return this;
     }
 
     public String getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(String ingredients) {
+    public Product setIngredients(String ingredients) {
         this.ingredients = ingredients;
+        return this;
     }
 
     public String getImageUrl() {
         return imageUrl;
     }
 
-    public void setImageUrl(String imageUrl) {
+    public Product setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public Product() {
+        return this;
     }
 
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public Product setId(String id) {
         this.id = id;
+        return this;
     }
 
-    public String getRestaurantId() {
-        return restaurantId;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setRestaurantId(String restaurantId) {
-        this.restaurantId = restaurantId;
+    public Product setQuantity(int quantity) {
+        this.quantity = quantity;
+        return this;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public Product setPrice(double price) {
+        this.price = price;
+        return this;
+    }
+
+    public void increaseQuantity() {
+        this.quantity++;
+    }
+
+    public void decreaseQuantity() {
+        if (quantity == 0) return;
+        this.quantity--;
     }
 
     @Override

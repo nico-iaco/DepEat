@@ -11,6 +11,7 @@ public class Utility {
     public static final String RESTAURANT_IMAGE_URL = "restaurantImageUrl";
     public static final String RESTAURANT_MIN_ORDER = "restaurantMinOrder";
     public static final String RESTAURANT_PRODUCTS = "restaurantProducts";
+    public static final String RESTAURANT_ID = "restaurantID";
     public static final String PRICE = "price";
     public static final int MIN_LENGTH_PSW = 6;
     public static final int LOGIN_REQUEST_CODE = 2001;

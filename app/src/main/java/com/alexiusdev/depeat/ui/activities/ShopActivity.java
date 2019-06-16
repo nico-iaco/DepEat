@@ -11,27 +11,42 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.alexiusdev.depeat.R;
-import com.alexiusdev.depeat.datamodels.Product;
-import com.alexiusdev.depeat.datamodels.Restaurant;
-import static com.alexiusdev.depeat.ui.Utility.*;
-import com.alexiusdev.depeat.ui.adapters.ProductAdapter;
-import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
-import java.util.ArrayList;
-import java.util.Locale;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alexiusdev.depeat.R;
+import com.alexiusdev.depeat.datamodels.Product;
+import com.alexiusdev.depeat.datamodels.Restaurant;
+import com.alexiusdev.depeat.services.RestController;
+import com.alexiusdev.depeat.ui.adapters.ProductAdapter;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
+import java.util.Locale;
+
+import static com.alexiusdev.depeat.ui.Utility.LOGIN_REQUEST_CODE;
+import static com.alexiusdev.depeat.ui.Utility.PRICE;
+import static com.alexiusdev.depeat.ui.Utility.RESTAURANT_ADDRESS;
+import static com.alexiusdev.depeat.ui.Utility.RESTAURANT_ID;
+import static com.alexiusdev.depeat.ui.Utility.RESTAURANT_IMAGE_URL;
+import static com.alexiusdev.depeat.ui.Utility.RESTAURANT_MIN_ORDER;
+import static com.alexiusdev.depeat.ui.Utility.RESTAURANT_NAME;
+import static com.alexiusdev.depeat.ui.Utility.RESTAURANT_PRODUCTS;
 import static com.alexiusdev.depeat.ui.Utility.showToast;
 
-public class ShopActivity extends AppCompatActivity implements View.OnClickListener, ProductAdapter.OnQuantityChangedListener {
+public class ShopActivity extends AppCompatActivity implements View.OnClickListener, ProductAdapter.OnQuantityChangedListener, Response.Listener<String>, Response.ErrorListener {
 
+    private static final String TAG = ShopActivity.class.getSimpleName();
     private Button checkoutBtn;
     private FirebaseAuth mAuth;
     FirebaseUser currentUser;
@@ -44,7 +59,8 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView restaurantIv, mapsIv;
     private RelativeLayout nothingRl;
     private static double total;
-
+    private RestController restController;
+    private ArrayList<Product> products;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,8 +90,11 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
         restaurantAddressTv.setText(restaurant.getAddress());
         progressBar.setMax((int)restaurant.getMinOrder() * 100);
 
+        restController = new RestController(this);
+        restController.getRestaurantProducts(restaurant.getId(), this, this);
+
         layoutManager = new LinearLayoutManager(this);
-        adapter = new ProductAdapter(this, restaurant.getProducts());
+        adapter = new ProductAdapter(this, products);
         adapter.setOnQuantityChangedListener(this);
 
         productRv.setAdapter(adapter);
@@ -89,7 +108,8 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
 
         Glide.with(this).load(restaurant.getImageUrl()).into(restaurantIv);
 
-        if(restaurant.getProducts().isEmpty()){
+
+        if (CollectionUtils.isEmpty(products)) {
             nothingRl.setVisibility(View.VISIBLE);
             productRv.setVisibility(View.GONE);
         }
@@ -125,21 +145,18 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @SuppressWarnings("unchecked")
     private Restaurant getRestaurantFromIntent() {
-        String name = "";
-        String address = "";
-        String imageUrl = "";
-        double minOrder = 0.0;
-        ArrayList<Product> products = new ArrayList<>();
-        if (getIntent().getExtras() != null && getIntent().getExtras().get(RESTAURANT_PRODUCTS) instanceof ArrayList) {
-            name = getIntent().getExtras().getString(RESTAURANT_NAME);
-            address = getIntent().getExtras().getString(RESTAURANT_ADDRESS);
-            imageUrl = getIntent().getExtras().getString(RESTAURANT_IMAGE_URL);
-            minOrder = getIntent().getExtras().getDouble(RESTAURANT_MIN_ORDER);
-            products = (ArrayList<Product>) getIntent().getExtras().get(RESTAURANT_PRODUCTS);
+        Restaurant restaurant = new Restaurant();
+        if (getIntent().getExtras() != null) {
+            String id = getIntent().getExtras().getString(RESTAURANT_ID);
+            String name = getIntent().getExtras().getString(RESTAURANT_NAME);
+            String address = getIntent().getExtras().getString(RESTAURANT_ADDRESS);
+            String imageUrl = getIntent().getExtras().getString(RESTAURANT_IMAGE_URL);
+            double minOrder = getIntent().getExtras().getDouble(RESTAURANT_MIN_ORDER);
+
+            restaurant = new Restaurant(id, name, address, imageUrl, minOrder);
         }
-        return new Restaurant(name, address, imageUrl, 0, minOrder, products);
+        return restaurant;
     }
 
     @Override
@@ -168,7 +185,28 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
     private void startCheckoutActivity(){
         startActivity(new Intent(this, CheckoutActivity.class)
                 .putExtra(RESTAURANT_NAME, restaurant.getName())
-                .putExtra(RESTAURANT_PRODUCTS, restaurant.getProducts())
-                .putExtra(PRICE, total));
+                .putExtra(RESTAURANT_PRODUCTS, products)
+                .putExtra(PRICE, total)
+                .putExtra(RESTAURANT_ID, restaurant.getId()));
+    }
+
+    @Override
+    public void onErrorResponse(VolleyError error) {
+
+    }
+
+    @Override
+    public void onResponse(String response) {
+        Log.d(TAG, response);
+        products = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(response);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                products.add(new Product(jsonArray.getJSONObject(i)));
+            }
+            adapter.setProducts(products);
+        } catch (JSONException e) {
+            Log.e(TAG, e.getMessage());
+        }
     }
 }

@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mAuth = FirebaseAuth.getInstance();
 
-        if(getIntent().getExtras() != null && getIntent().getExtras().getString(EMAIL_KEY) != null)
+        if (getIntent().getExtras() != null && getIntent().getExtras().getString(EMAIL_KEY) != null)
             showToast(this, getString(R.string.welcome) + " " + getIntent().getExtras().getString(EMAIL_KEY));
 
         restController = new RestController(this);
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         gridViewMenuItem = menu.findItem(R.id.grid_menu);
         cardViewMenuItem = menu.findItem(R.id.card_menu);
         profileMenuItem = menu.findItem(R.id.profile_menu);
-        if(currentUser == null) {
+        if (currentUser == null) {
             loginMenuItem.setVisible(true);
             logoutMenuItem.setVisible(false);
             profileMenuItem.setVisible(false);
@@ -101,10 +101,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             profileMenuItem.setVisible(true);
         }
 
-        if(adapter.isGridMode()){
+        if (adapter.isGridMode()) {
             cardViewMenuItem.setVisible(true);
             gridViewMenuItem.setVisible(false);
-        }else{
+        } else {
             cardViewMenuItem.setVisible(false);
             gridViewMenuItem.setVisible(true);
         }
@@ -114,19 +114,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main,menu);
+        inflater.inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case (R.id.login_menu):
                 startActivity(new Intent(this, LoginActivity.class));
                 return true;
             case (R.id.logout_menu):
                 mAuth.signOut();
-                showToast(this,getString(R.string.user_logged_out));
+                showToast(this, getString(R.string.user_logged_out));
                 startActivity(new Intent(this, MainActivity.class));
                 return true;
             case (R.id.grid_menu):
@@ -150,8 +150,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
     }
 
-    private void setLayoutManager(){
-        layoutManager = adapter.isGridMode() ? new LinearLayoutManager(this) : new StaggeredGridLayoutManager(2,1);
+    private void setLayoutManager() {
+        layoutManager = adapter.isGridMode() ? new LinearLayoutManager(this) : new StaggeredGridLayoutManager(2, 1);
         adapter.setGridMode(!adapter.isGridMode());
         restaurantRV.setLayoutManager(layoutManager);
         restaurantRV.setAdapter(adapter);
@@ -159,21 +159,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onErrorResponse(VolleyError error) {
-
-        showToast(this,error.getMessage());
+        showToast(this, error.getMessage());
         Log.d("error", error.getMessage());
     }
 
     @Override
     public void onResponse(String response) {
-        Log.d(TAG,response);
+        Log.d(TAG, response);
         try {
             JSONArray jsonArray = new JSONArray(response);
-            for(int i = 0; i < jsonArray.length(); i++)
+            for (int i = 0; i < jsonArray.length(); i++)
                 restaurants.add(new Restaurant(jsonArray.getJSONObject(i)));
             adapter.setRestaurants(restaurants);
         } catch (JSONException e) {
-            Log.e(TAG,e.getMessage());
+            Log.e(TAG, e.getMessage());
         }
         loadingPanel.setVisibility(View.GONE);
         restaurantRV.setVisibility(View.VISIBLE);

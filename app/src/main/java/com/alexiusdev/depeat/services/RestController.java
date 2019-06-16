@@ -42,13 +42,12 @@ public class RestController {
         getRequest(this.BASE_URL, endpoint, success, error);
     }
 
-    public void getRestaurantProducts(String restaurandId, Response.Listener<String> success, Response.ErrorListener error) {
+    public void getRestaurantProducts(String restaurantId, Response.Listener<String> success, Response.ErrorListener error) {
         String endpoint = properties.getProperty("url.rest.getProducts");
         String[] paramNames = {"restaurantId"};
-        endpoint = resolveUrl(endpoint, paramNames, restaurandId);
+        endpoint = resolveUrl(endpoint, paramNames, restaurantId);
         getRequest(this.BASE_URL, endpoint, success, error);
     }
-
 
     public void postRequest(String endPoint, final JSONArray body, Response.Listener<String> success, Response.ErrorListener error) {
         StringRequest request = new StringRequest(Request.Method.POST, BASE_URL.concat(endPoint), success, error){
@@ -76,7 +75,9 @@ public class RestController {
         return properties;
     }
 
-    private String resolveUrl(final String url, final String[] paramNames, final String... paramValues) {
+    private String resolveUrl(String url, final String[] paramNames, final String... paramValues) {
+        url = StringUtils.replace(url, "{", "");
+        url = StringUtils.replace(url, "}", "");
         return StringUtils.replaceEach(url, paramNames, paramValues);
     }
 
