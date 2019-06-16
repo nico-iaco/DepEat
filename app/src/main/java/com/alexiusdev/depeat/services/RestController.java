@@ -26,31 +26,33 @@ public class RestController {
     private RequestQueue queue;
     private Context context;
     private Properties properties;
+    private String authCode;
 
-    public RestController(Context context){
+    public RestController(Context context) {
         this.context = context;
         properties = getApplicationProperties("application.properties");
         this.BASE_URL = properties.getProperty("url.rest.basePath");
-
+        this.authCode = properties.getProperty("application.authCode");
 
         queue = Volley.newRequestQueue(context);
     }
 
-
     public void getRestaurants(Response.Listener<String> success, Response.ErrorListener error) {
         String endpoint = properties.getProperty("url.rest.getRestaurants");
+        String[] paramNames = {"authCode"};
+        endpoint = resolveUrl(endpoint, paramNames, authCode);
         getRequest(this.BASE_URL, endpoint, success, error);
     }
 
     public void getRestaurantProducts(String restaurantId, Response.Listener<String> success, Response.ErrorListener error) {
         String endpoint = properties.getProperty("url.rest.getProducts");
-        String[] paramNames = {"restaurantId"};
-        endpoint = resolveUrl(endpoint, paramNames, restaurantId);
+        String[] paramNames = {"authCode", "restaurantId"};
+        endpoint = resolveUrl(endpoint, paramNames, authCode, restaurantId);
         getRequest(this.BASE_URL, endpoint, success, error);
     }
 
     public void postRequest(String endPoint, final JSONArray body, Response.Listener<String> success, Response.ErrorListener error) {
-        StringRequest request = new StringRequest(Request.Method.POST, BASE_URL.concat(endPoint), success, error){
+        StringRequest request = new StringRequest(Request.Method.POST, BASE_URL.concat(endPoint), success, error) {
             @Override
             public byte[] getBody() throws AuthFailureError {
                 if (body != null) {
@@ -89,7 +91,7 @@ public class RestController {
     }
 
     private void postRequest(final String BASE_URL, final String endPoint, final JSONObject body, Response.Listener<String> success, Response.ErrorListener error) {
-        StringRequest request = new StringRequest(Request.Method.POST, BASE_URL.concat(endPoint), success, error){
+        StringRequest request = new StringRequest(Request.Method.POST, BASE_URL.concat(endPoint), success, error) {
             @Override
             public byte[] getBody() throws AuthFailureError {
                 if (body != null) {

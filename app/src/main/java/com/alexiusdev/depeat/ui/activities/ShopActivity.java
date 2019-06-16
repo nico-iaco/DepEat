@@ -88,7 +88,7 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
 
         restaurantNameTv.setText(restaurant.getName());
         restaurantAddressTv.setText(restaurant.getAddress());
-        progressBar.setMax((int)restaurant.getMinOrder() * 100);
+        progressBar.setMax((int) restaurant.getMinOrder() * 100);
 
         restController = new RestController(this);
         restController.getRestaurantProducts(restaurant.getId(), this, this);
@@ -100,11 +100,11 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
         productRv.setAdapter(adapter);
         productRv.setLayoutManager(layoutManager);
 
-        minOrderTv.setText(getString(R.string.currency).concat(String.format(Locale.getDefault(),"%.2f", restaurant.getMinOrder())));
+        minOrderTv.setText(getString(R.string.currency).concat(String.format(Locale.getDefault(), "%.2f", restaurant.getMinOrder())));
 
         //initialise stuff at 0
         progressBar.setProgress(0);
-        totalPriceTv.setText(getString(R.string.currency).concat(String.format(Locale.getDefault(),"%.2f",0.0)));
+        totalPriceTv.setText(getString(R.string.currency).concat(String.format(Locale.getDefault(), "%.2f", 0.0)));
 
         Glide.with(this).load(restaurant.getImageUrl()).into(restaurantIv);
 
@@ -124,9 +124,9 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        switch(view.getId()){
+        switch (view.getId()) {
             case (R.id.checkout_btn):
-                if(currentUser == null) {
+                if (currentUser == null) {
                     showToast(this, getString(R.string.login_required));
                     startActivityForResult(new Intent(this, LoginActivity.class), LOGIN_REQUEST_CODE);
                 } else
@@ -140,7 +140,7 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == LOGIN_REQUEST_CODE && resultCode == RESULT_OK){
+        if (requestCode == LOGIN_REQUEST_CODE && resultCode == RESULT_OK) {
             startCheckoutActivity();
         }
     }
@@ -161,28 +161,28 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onChange(double price) {
-        Log.i("PREZZO",String.valueOf(price));
+        Log.i("PREZZO", String.valueOf(price));
         total += price;
         updateUi(total);
-        Log.i("PREZZO_TOTAL",String.valueOf(total));
+        Log.i("PREZZO_TOTAL", String.valueOf(total));
     }
 
-    private void updateUi(double total){
-        totalPriceTv.setText(getString(R.string.currency).concat(String.format(Locale.getDefault(),"%.2f",total)));
+    private void updateUi(double total) {
+        totalPriceTv.setText(getString(R.string.currency).concat(String.format(Locale.getDefault(), "%.2f", total)));
         enableCheckout(total);
-        updateProgress((int)total*100);
+        updateProgress((int) total * 100);
     }
 
-    private void updateProgress(int progress){
+    private void updateProgress(int progress) {
         progressBar.setProgress(progress);
     }
 
-    public void enableCheckout(double total){
+    public void enableCheckout(double total) {
         checkoutBtn.setEnabled(total >= restaurant.getMinOrder());
         checkoutBtn.setTextColor(total >= restaurant.getMinOrder() ? getResources().getColor(R.color.primary_text) : getResources().getColor(R.color.secondary_text));
     }
 
-    private void startCheckoutActivity(){
+    private void startCheckoutActivity() {
         startActivity(new Intent(this, CheckoutActivity.class)
                 .putExtra(RESTAURANT_NAME, restaurant.getName())
                 .putExtra(RESTAURANT_PRODUCTS, products)
@@ -207,6 +207,11 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
             adapter.setProducts(products);
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage());
+        }
+
+        if (CollectionUtils.isNotEmpty(products)) {
+            nothingRl.setVisibility(View.GONE);
+            productRv.setVisibility(View.VISIBLE);
         }
     }
 }

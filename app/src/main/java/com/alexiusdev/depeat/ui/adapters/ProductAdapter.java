@@ -39,15 +39,14 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     @Override
-    public synchronized void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int index) {
-        Product product = products.get(index);
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int index) {
         ProductViewHolder productViewHolder = (ProductViewHolder) viewHolder;
 
-        productViewHolder.productName.setText(product.getName());
-        productViewHolder.productTotalPrice.setText(context.getString(R.string.currency).concat(String.format(Locale.getDefault(), "%.2f", product.getPrice() * product.getQuantity())));
-        productViewHolder.productSinglePrice.setText(context.getString(R.string.currency).concat(String.format(Locale.getDefault(), "%.2f", product.getPrice())));
-        productViewHolder.productQty.setText(String.valueOf(product.getQuantity()));
-        Glide.with(context).load(product.getImageUrl()).into(productViewHolder.foodIv);
+        productViewHolder.productName.setText(products.get(index).getName());
+        productViewHolder.productTotalPrice.setText(context.getString(R.string.currency).concat(String.format(Locale.getDefault(), "%.2f", products.get(index).getPrice() * products.get(index).getQuantity())));
+        productViewHolder.productSinglePrice.setText(context.getString(R.string.currency).concat(String.format(Locale.getDefault(), "%.2f", products.get(index).getPrice())));
+        productViewHolder.productQty.setText(String.valueOf(products.get(index).getQuantity()));
+        Glide.with(context).load(products.get(index).getImageUrl()).into(productViewHolder.foodIv);
 
     }
 
@@ -69,7 +68,6 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public void setProducts(ArrayList<Product> products) {
-        //fixme unable to show products
         this.products = products;
         notifyDataSetChanged();
     }
