@@ -1,6 +1,7 @@
 package com.alexiusdev.depeat.services;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -10,42 +11,46 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-
-import androidx.annotation.NonNull;
+import java.util.Properties;
 
 public class RestController {
 
-    private static final String BASE_URL = "http://5c659d3419df280014b6272a.mockapi.io/api/";
-    private static final String VERSION = "v1/";
+    private final String BASE_URL;
     private static final String TAG = RestController.class.getSimpleName();
-    private static final String KEY = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YzY1NmU4ZGZiMmE1YTRiZmE0NGFjZjQiLCJpYXQiOjE1NTAxNTkzOTIsImV4cCI6MTU1Mjc1MTM5Mn0.yNG02NbUVfTBlxjO5Y_-sfzbtvyQnefaFkzRXTSC-v4";
     private RequestQueue queue;
+    private Context context;
+    private Properties properties;
 
     public RestController(Context context){
+        this.context = context;
+        properties = getApplicationProperties("application.properties");
+        this.BASE_URL = properties.getProperty("url.rest.basePath");
+
+
         queue = Volley.newRequestQueue(context);
     }
 
-    public void getRequest(String endPoint, Response.Listener<String> success, Response.ErrorListener error){
-        Log.d(TAG,"API link: " + BASE_URL /*+ VERSION*/ + endPoint /*+ FINAL_TAG*/);
 
-        StringRequest request = new StringRequest(Request.Method.GET, BASE_URL.concat(VERSION).concat(endPoint), success, error);
-        queue.add(request);
+    public void getRestaurants(Response.Listener<String> success, Response.ErrorListener error) {
+        String endpoint = properties.getProperty("url.rest.getRestaurants");
+        getRequest(this.BASE_URL, endpoint, success, error);
+    }
+
+    public void getRestaurantProducts(String restaurandId, Response.Listener<String> success, Response.ErrorListener error) {
+        String endpoint = properties.getProperty("url.rest.getProducts");
+        String[] paramNames = {"restaurantId"};
+        endpoint = resolveUrl(endpoint, paramNames, restaurandId);
+        getRequest(this.BASE_URL, endpoint, success, error);
     }
 
 
-    public void postRequest(String endPoint, final JSONObject body, Response.Listener<String> success, Response.ErrorListener error){
+    public void postRequest(String endPoint, final JSONArray body, Response.Listener<String> success, Response.ErrorListener error) {
         StringRequest request = new StringRequest(Request.Method.POST, BASE_URL.concat(endPoint), success, error){
             @Override
             public byte[] getBody() throws AuthFailureError {
@@ -55,18 +60,34 @@ public class RestController {
                 }
                 return super.getBody();
             }
-
-            @Override
-            public Map<String, String> getHeaders(){
-                Map<String,String> map = new HashMap<>();
-                map.put("Authorization",KEY);
-                return map;
-            }
         };
         queue.add(request);
     }
 
-    public void postRequest(String endPoint, final JSONArray body, Response.Listener<String> success, Response.ErrorListener error){
+    private Properties getApplicationProperties(String file) {
+        try {
+            properties = new Properties();
+            AssetManager assetManager = context.getAssets();
+            InputStream inputStream = assetManager.open(file);
+            properties.load(inputStream);
+        } catch (Exception e) {
+            System.out.print(e.getMessage());
+        }
+        return properties;
+    }
+
+    private String resolveUrl(final String url, final String[] paramNames, final String... paramValues) {
+        return StringUtils.replaceEach(url, paramNames, paramValues);
+    }
+
+    private void getRequest(final String BASE_URL, final String endPoint, Response.Listener<String> success, Response.ErrorListener error) {
+        Log.d(TAG, "API link: " + BASE_URL + endPoint);
+
+        StringRequest request = new StringRequest(Request.Method.GET, BASE_URL.concat(endPoint), success, error);
+        queue.add(request);
+    }
+
+    private void postRequest(final String BASE_URL, final String endPoint, final JSONObject body, Response.Listener<String> success, Response.ErrorListener error) {
         StringRequest request = new StringRequest(Request.Method.POST, BASE_URL.concat(endPoint), success, error){
             @Override
             public byte[] getBody() throws AuthFailureError {
@@ -76,14 +97,8 @@ public class RestController {
                 }
                 return super.getBody();
             }
-
-            @Override
-            public Map<String, String> getHeaders(){
-                Map<String,String> map = new HashMap<>();
-                map.put("Authorization",KEY);
-                return map;
-            }
         };
         queue.add(request);
     }
+
 }

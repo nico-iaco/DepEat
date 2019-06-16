@@ -2,29 +2,25 @@ package com.alexiusdev.depeat.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.RelativeLayout;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import android.util.Log;
-
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-
 import com.alexiusdev.depeat.R;
 import com.alexiusdev.depeat.datamodels.Restaurant;
 import com.alexiusdev.depeat.services.RestController;
 import com.alexiusdev.depeat.ui.adapters.RestaurantAdapter;
-
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -33,7 +29,8 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
-import static com.alexiusdev.depeat.ui.Utility.*;
+import static com.alexiusdev.depeat.ui.Utility.EMAIL_KEY;
+import static com.alexiusdev.depeat.ui.Utility.showToast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, Response.Listener<String>, Response.ErrorListener {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -66,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             showToast(this, getString(R.string.welcome) + " " + getIntent().getExtras().getString(EMAIL_KEY));
 
         restController = new RestController(this);
-        restController.getRequest(Restaurant.END_POINT,this,this);
+        restController.getRestaurants(this, this);
 
 
        /*try {
