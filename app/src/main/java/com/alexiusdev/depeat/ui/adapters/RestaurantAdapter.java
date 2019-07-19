@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import static com.alexiusdev.depeat.ui.Utility.RESTAURANT_ADDRESS;
@@ -29,7 +30,7 @@ import static com.alexiusdev.depeat.ui.Utility.RESTAURANT_NAME;
 
 public class RestaurantAdapter extends RecyclerView.Adapter {
     private LayoutInflater inflater;
-    private ArrayList<Restaurant> restaurants;
+    private List<Restaurant> restaurants;
     private boolean isGridMode;
     private Context context;
 
@@ -39,7 +40,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter {
         this.context = context;
     }
 
-    public RestaurantAdapter(Context context, ArrayList<Restaurant> restaurants){
+    public RestaurantAdapter(Context context, List<Restaurant> restaurants) {
         inflater = LayoutInflater.from(context);
         this.restaurants = restaurants;
         this.context = context;
@@ -69,7 +70,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter {
         return restaurants.size();
     }
 
-    public void setRestaurants(ArrayList<Restaurant> restaurants){
+    public void setRestaurants(List<Restaurant> restaurants) {
         this.restaurants = restaurants;
         notifyDataSetChanged();
     }

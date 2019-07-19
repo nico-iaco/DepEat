@@ -4,12 +4,14 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 
+import com.alexiusdev.depeat.ui.HttpRequestType;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.database.annotations.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -17,54 +19,41 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class RestController {
 
-    private final String BASE_URL;
     private static final String TAG = RestController.class.getSimpleName();
+    private final String BASE_URL;
+    private Properties properties;
     private RequestQueue queue;
     private Context context;
-    private Properties properties;
-    private String authCode;
 
     public RestController(Context context) {
         this.context = context;
-        properties = getApplicationProperties("application.properties");
-        this.BASE_URL = properties.getProperty("url.rest.basePath");
-        this.authCode = properties.getProperty("application.authCode");
+        properties = getApplicationProperties("app.properties");
 
+
+        BASE_URL = properties.getProperty("url.rest.basePath");
         queue = Volley.newRequestQueue(context);
     }
 
     public void getRestaurants(Response.Listener<String> success, Response.ErrorListener error) {
-        String endpoint = properties.getProperty("url.rest.getRestaurants");
         String[] paramNames = {"authCode"};
-        endpoint = resolveUrl(endpoint, paramNames, authCode);
-        getRequest(this.BASE_URL, endpoint, success, error);
+        String endpoint = resolveUrl(properties.getProperty("url.rest.getRestaurants"), paramNames, properties.getProperty("application.authCode"));
+        requestHelper(HttpRequestType.GET, endpoint, success, error);
     }
 
     public void getRestaurantProducts(String restaurantId, Response.Listener<String> success, Response.ErrorListener error) {
-        String endpoint = properties.getProperty("url.rest.getProducts");
         String[] paramNames = {"authCode", "restaurantId"};
-        endpoint = resolveUrl(endpoint, paramNames, authCode, restaurantId);
-        getRequest(this.BASE_URL, endpoint, success, error);
+        String endpoint = resolveUrl(properties.getProperty("url.rest.getProducts"), paramNames, properties.getProperty("application.authCode"), restaurantId);
+        requestHelper(HttpRequestType.GET, endpoint, success, error);
     }
 
-    public void postRequest(String endPoint, final JSONArray body, Response.Listener<String> success, Response.ErrorListener error) {
-        StringRequest request = new StringRequest(Request.Method.POST, BASE_URL.concat(endPoint), success, error) {
-            @Override
-            public byte[] getBody() throws AuthFailureError {
-                if (body != null) {
-                    Log.d("body", body.toString());
-                    return body.toString().getBytes(StandardCharsets.UTF_8);
-                }
-                return super.getBody();
-            }
-        };
-        queue.add(request);
-    }
 
+    /****************** PRIVATE METHODS ******************/
     private Properties getApplicationProperties(String file) {
         try {
             properties = new Properties();
@@ -72,7 +61,7 @@ public class RestController {
             InputStream inputStream = assetManager.open(file);
             properties.load(inputStream);
         } catch (Exception e) {
-            System.out.print(e.getMessage());
+            Log.e(TAG, e.getMessage());
         }
         return properties;
     }
@@ -83,14 +72,33 @@ public class RestController {
         return StringUtils.replaceEach(url, paramNames, paramValues);
     }
 
-    private void getRequest(final String BASE_URL, final String endPoint, Response.Listener<String> success, Response.ErrorListener error) {
+    private void requestHelper(HttpRequestType httpRequestType, String endpoint, Response.Listener<String> success, Response.ErrorListener error) {
+        if (httpRequestType == null || StringUtils.isEmpty(endpoint) || success == null || error == null)
+            throw new IllegalArgumentException("Parameters cannot be null");
+        requestHelper(httpRequestType, null, endpoint, success, error);
+    }
+
+    private void requestHelper(HttpRequestType httpRequestType, JSONArray body, String endpoint, Response.Listener<String> success, Response.ErrorListener error) {
+        switch (httpRequestType) {
+            case GET:
+                getRequest(endpoint, success, error);
+                break;
+            case POST:
+                if (body == null || body.length() == 0)
+                    throw new IllegalArgumentException("Body in POST req cannot be null nor empty");
+                postRequest(endpoint, body, success, error);
+                break;
+        }
+    }
+
+    private void getRequest(String endPoint, Response.Listener<String> success, Response.ErrorListener error) {
         Log.d(TAG, "API link: " + BASE_URL + endPoint);
 
         StringRequest request = new StringRequest(Request.Method.GET, BASE_URL.concat(endPoint), success, error);
         queue.add(request);
     }
 
-    private void postRequest(final String BASE_URL, final String endPoint, final JSONObject body, Response.Listener<String> success, Response.ErrorListener error) {
+    private void postRequest(String endPoint, final JSONArray body, Response.Listener<String> success, Response.ErrorListener error) {
         StringRequest request = new StringRequest(Request.Method.POST, BASE_URL.concat(endPoint), success, error) {
             @Override
             public byte[] getBody() throws AuthFailureError {

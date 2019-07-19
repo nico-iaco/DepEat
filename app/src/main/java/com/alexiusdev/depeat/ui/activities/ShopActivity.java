@@ -192,7 +192,7 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onErrorResponse(VolleyError error) {
-
+        nothingRl.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -207,6 +207,8 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
             adapter.setProducts(products);
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage());
+            nothingRl.setVisibility(View.VISIBLE);
+            productRv.setVisibility(View.GONE);
         }
 
         if (CollectionUtils.isNotEmpty(products)) {

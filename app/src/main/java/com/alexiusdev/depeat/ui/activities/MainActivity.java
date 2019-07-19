@@ -24,10 +24,12 @@ import com.android.volley.VolleyError;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.alexiusdev.depeat.ui.Utility.EMAIL_KEY;
 import static com.alexiusdev.depeat.ui.Utility.showToast;
@@ -39,11 +41,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView.LayoutManager layoutManager;
     private RestaurantAdapter adapter;
     private RestController restController;
-    private RelativeLayout loadingPanel;
+    private RelativeLayout loadingPanel, nothingRl;
 
     FirebaseUser currentUser;
     RecyclerView restaurantRV;
-    ArrayList<Restaurant> restaurants = new ArrayList<>();
+    private List<Restaurant> restaurants;
 
 
     @Override
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         restaurantRV = findViewById(R.id.restaurant_rv);
         loadingPanel = findViewById(R.id.loadingPanel);
+        nothingRl = findViewById(R.id.nothing_rl);
         restaurantRV.setLayoutManager(new LinearLayoutManager(this));
         adapter = new RestaurantAdapter(this);
         restaurantRV.setAdapter(adapter);
@@ -65,6 +68,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         restController = new RestController(this);
         restController.getRestaurants(this, this);
 
+        if (CollectionUtils.isEmpty(restaurants)) {
+            loadingPanel.setVisibility(View.GONE);
+            restaurantRV.setVisibility(View.GONE);
+            nothingRl.setVisibility(View.VISIBLE);
+        }
 
        /*try {
             for(int i = 0; i < restController.readFromDB().length(); i++) {
@@ -160,22 +168,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onErrorResponse(VolleyError error) {
         showToast(this, error.getMessage());
-        Log.d("error", error.getMessage());
+        Log.d("error", error.getMessage() != null ? error.getMessage() : "");
+        nothingRl.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onResponse(String response) {
         Log.d(TAG, response);
+        restaurants = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(response);
-            for (int i = 0; i < jsonArray.length(); i++)
+            for (int i = 0; i < jsonArray.length(); i++) {
                 restaurants.add(new Restaurant(jsonArray.getJSONObject(i)));
+            }
             adapter.setRestaurants(restaurants);
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage());
+            restaurantRV.setVisibility(View.GONE);
+            loadingPanel.setVisibility(View.GONE);
+            nothingRl.setVisibility(View.VISIBLE);
         }
-        loadingPanel.setVisibility(View.GONE);
-        restaurantRV.setVisibility(View.VISIBLE);
+
+        if (CollectionUtils.isNotEmpty(restaurants)) {
+            nothingRl.setVisibility(View.GONE);
+            loadingPanel.setVisibility(View.GONE);
+            restaurantRV.setVisibility(View.VISIBLE);
+        }
     }
 
 

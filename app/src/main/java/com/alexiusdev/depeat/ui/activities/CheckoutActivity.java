@@ -78,7 +78,8 @@ public class CheckoutActivity extends AppCompatActivity implements Response.List
         RestController restController = new RestController(this);
         JSONArray body = new JSONArray();
         body.put(restaurantId).put(userId).put(total).put(jsonArrayFromJsonProductFromArrayList(products));
-        restController.postRequest("orders",body, this,this);
+        //fixme create payment method in the controller
+        //restController.postRequest("orders",body, this,this);
     }
 
     @Override
