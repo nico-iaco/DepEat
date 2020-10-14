@@ -19,4 +19,26 @@
             android:layout_height="wrap_content"
             android:indeterminate="true" />
     </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/nothing_rl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/nothing_iv"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/sad_face"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/nothing_iv"
+            android:text="@string/nothing" />
+    </RelativeLayout>
 </RelativeLayout>

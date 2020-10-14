@@ -2,7 +2,7 @@
     <string name="app_name">DepEat</string>
     <string name="cart">Cart</string>
     <string name="credits">Developed by <u>@Alexius33</u></string>
-    <string name="version">v0.1</string>
+    <string name="version">v1.0</string>
     <string name="email">Email</string>
     <string name="email_hint">Please enter email here</string>
     <string name="password">Password</string>

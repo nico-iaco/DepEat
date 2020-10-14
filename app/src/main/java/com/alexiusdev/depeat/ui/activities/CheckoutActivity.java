@@ -1,18 +1,16 @@
 package com.alexiusdev.depeat.ui.activities;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.alexiusdev.depeat.R;
-import static com.alexiusdev.depeat.ui.Utility.*;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.alexiusdev.depeat.R;
 import com.alexiusdev.depeat.datamodels.Product;
 import com.alexiusdev.depeat.services.RestController;
 import com.alexiusdev.depeat.ui.adapters.CheckoutAdapter;
@@ -26,12 +24,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
 
+import static com.alexiusdev.depeat.ui.Utility.PRICE;
+import static com.alexiusdev.depeat.ui.Utility.RESTAURANT_ID;
+import static com.alexiusdev.depeat.ui.Utility.RESTAURANT_NAME;
+import static com.alexiusdev.depeat.ui.Utility.RESTAURANT_PRODUCTS;
+
 public class CheckoutActivity extends AppCompatActivity implements Response.Listener<String>, Response.ErrorListener {
     private TextView nameTv, priceTv;
     private Button payBtn;
     private CheckoutAdapter adapter;
     private ArrayList<Product> products;
     private RecyclerView checkoutRv;
+    private String restaurantId;
 
 
     @SuppressWarnings({"unchecked","ConstantConditions"})
@@ -45,7 +49,7 @@ public class CheckoutActivity extends AppCompatActivity implements Response.List
         checkoutRv = findViewById(R.id.product_rv);
         priceTv = findViewById(R.id.price_tv);
 
-        payBtn.setOnClickListener(v -> paymentRequest(products.get(0).getRestaurantId(),"123123", priceTv.getText().toString()));
+        payBtn.setOnClickListener(v -> paymentRequest(String.valueOf(getIntent().getExtras().get(RESTAURANT_ID)), "123123", priceTv.getText().toString()));
 
         if(getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().get(RESTAURANT_PRODUCTS) instanceof ArrayList){ //get products from intent
             nameTv.setText(getIntent().getExtras().getString(RESTAURANT_NAME));
@@ -74,7 +78,8 @@ public class CheckoutActivity extends AppCompatActivity implements Response.List
         RestController restController = new RestController(this);
         JSONArray body = new JSONArray();
         body.put(restaurantId).put(userId).put(total).put(jsonArrayFromJsonProductFromArrayList(products));
-        restController.postRequest("orders",body, this,this);
+        //fixme create payment method in the controller
+        //restController.postRequest("orders",body, this,this);
     }
 
     @Override

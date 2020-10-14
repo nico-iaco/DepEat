@@ -3,40 +3,38 @@ package com.alexiusdev.depeat.datamodels;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 public class Restaurant {
-    private String name, address, imageUrl, id;
+    private String name, address, imageUrl, id, phoneNum;
     private int rating;
     private double minOrder;
-    private ArrayList<Product> products = new ArrayList<>();
 
     public Restaurant() {
     }
 
-    public static final String END_POINT = "restaurants";
-
-    public Restaurant(String name, String address, String imageUrl, int rating, double minOrder, ArrayList<Product> products) {
+    public Restaurant(String name, String address, String imageUrl, String phoneNum, int rating, double minOrder) {
         this.name = name;
         this.address = address;
         this.imageUrl = imageUrl;
         this.rating = rating;
         this.minOrder = minOrder;
-        this.products = products;
+        this.phoneNum = phoneNum;
     }
 
     public Restaurant(JSONObject jsonRestaurant) throws JSONException {
         id = jsonRestaurant.getString("id");
         name = jsonRestaurant.getString("name");
         address = jsonRestaurant.getString("address");
-        imageUrl = jsonRestaurant.getString("image_url");
+        imageUrl = jsonRestaurant.getString("imageUrl");
+        phoneNum = jsonRestaurant.getString("phoneNum");
         rating = Integer.parseInt(jsonRestaurant.getString("rating"));
-        minOrder = Double.parseDouble(jsonRestaurant.getString("min_order"));
-        for(int i = 0; i < jsonRestaurant.getJSONArray("products").length(); i++)
-            products.add(new Product(jsonRestaurant.getJSONArray("products").getJSONObject(i)));
+        minOrder = Double.parseDouble(jsonRestaurant.getString("minOrder"));
     }
 
-    public void setMinOrder(float minOrder) {
+    public Restaurant(String id, String name, String address, String imageUrl, double minOrder) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.imageUrl = imageUrl;
         this.minOrder = minOrder;
     }
 
@@ -44,63 +42,66 @@ public class Restaurant {
         return name;
     }
 
-    public void setName(String name) {
+    public Restaurant setName(String name) {
         this.name = name;
-    }
-
-    public Float getRatingFloat() {
-        return rating/10F;
-    }
-
-    public int getRatingInt() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
+        return this;
     }
 
     public String getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    public Restaurant setAddress(String address) {
         this.address = address;
-    }
-
-    public double getMinOrder() {
-        return minOrder;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public ArrayList<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(ArrayList<Product> products) {
-        this.products = products;
+        return this;
     }
 
     public String getImageUrl() {
         return imageUrl;
     }
 
-    public static String getEndPoint() {
-        return END_POINT;
-    }
-
-    public void setImageUrl(String imageUrl) {
+    public Restaurant setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+        return this;
     }
 
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public Restaurant setId(String id) {
         this.id = id;
+        return this;
+    }
+
+    public String getPhoneNum() {
+        return phoneNum;
+    }
+
+    public Restaurant setPhoneNum(String phoneNum) {
+        this.phoneNum = phoneNum;
+        return this;
+    }
+
+    public Float getRatingFloat() {
+        return rating / 10F;
+    }
+
+    public int getRatingInt() {
+        return rating;
+    }
+
+    public Restaurant setRating(int rating) {
+        this.rating = rating;
+        return this;
+    }
+
+    public double getMinOrder() {
+        return minOrder;
+    }
+
+    public Restaurant setMinOrder(double minOrder) {
+        this.minOrder = minOrder;
+        return this;
     }
 }

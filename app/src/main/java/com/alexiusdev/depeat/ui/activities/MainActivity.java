@@ -24,10 +24,12 @@ import com.android.volley.VolleyError;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.alexiusdev.depeat.ui.Utility.EMAIL_KEY;
 import static com.alexiusdev.depeat.ui.Utility.showToast;
@@ -39,11 +41,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView.LayoutManager layoutManager;
     private RestaurantAdapter adapter;
     private RestController restController;
-    private RelativeLayout loadingPanel;
+    private RelativeLayout loadingPanel, nothingRl;
 
     FirebaseUser currentUser;
     RecyclerView restaurantRV;
-    ArrayList<Restaurant> restaurants = new ArrayList<>();
+    private List<Restaurant> restaurants;
 
 
     @Override
@@ -53,18 +55,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         restaurantRV = findViewById(R.id.restaurant_rv);
         loadingPanel = findViewById(R.id.loadingPanel);
+        nothingRl = findViewById(R.id.nothing_rl);
         restaurantRV.setLayoutManager(new LinearLayoutManager(this));
         adapter = new RestaurantAdapter(this);
         restaurantRV.setAdapter(adapter);
 
         mAuth = FirebaseAuth.getInstance();
 
-        if(getIntent().getExtras() != null && getIntent().getExtras().getString(EMAIL_KEY) != null)
+        if (getIntent().getExtras() != null && getIntent().getExtras().getString(EMAIL_KEY) != null)
             showToast(this, getString(R.string.welcome) + " " + getIntent().getExtras().getString(EMAIL_KEY));
 
         restController = new RestController(this);
         restController.getRestaurants(this, this);
 
+        if (CollectionUtils.isEmpty(restaurants)) {
+            loadingPanel.setVisibility(View.GONE);
+            restaurantRV.setVisibility(View.GONE);
+            nothingRl.setVisibility(View.VISIBLE);
+        }
 
        /*try {
             for(int i = 0; i < restController.readFromDB().length(); i++) {
@@ -91,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         gridViewMenuItem = menu.findItem(R.id.grid_menu);
         cardViewMenuItem = menu.findItem(R.id.card_menu);
         profileMenuItem = menu.findItem(R.id.profile_menu);
-        if(currentUser == null) {
+        if (currentUser == null) {
             loginMenuItem.setVisible(true);
             logoutMenuItem.setVisible(false);
             profileMenuItem.setVisible(false);
@@ -101,10 +109,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             profileMenuItem.setVisible(true);
         }
 
-        if(adapter.isGridMode()){
+        if (adapter.isGridMode()) {
             cardViewMenuItem.setVisible(true);
             gridViewMenuItem.setVisible(false);
-        }else{
+        } else {
             cardViewMenuItem.setVisible(false);
             gridViewMenuItem.setVisible(true);
         }
@@ -114,19 +122,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main,menu);
+        inflater.inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case (R.id.login_menu):
                 startActivity(new Intent(this, LoginActivity.class));
                 return true;
             case (R.id.logout_menu):
                 mAuth.signOut();
-                showToast(this,getString(R.string.user_logged_out));
+                showToast(this, getString(R.string.user_logged_out));
                 startActivity(new Intent(this, MainActivity.class));
                 return true;
             case (R.id.grid_menu):
@@ -150,8 +158,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
     }
 
-    private void setLayoutManager(){
-        layoutManager = adapter.isGridMode() ? new LinearLayoutManager(this) : new StaggeredGridLayoutManager(2,1);
+    private void setLayoutManager() {
+        layoutManager = adapter.isGridMode() ? new LinearLayoutManager(this) : new StaggeredGridLayoutManager(2, 1);
         adapter.setGridMode(!adapter.isGridMode());
         restaurantRV.setLayoutManager(layoutManager);
         restaurantRV.setAdapter(adapter);
@@ -159,24 +167,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onErrorResponse(VolleyError error) {
-
-        showToast(this,error.getMessage());
-        Log.d("error", error.getMessage());
+        showToast(this, error.getMessage());
+        Log.d("error", error.getMessage() != null ? error.getMessage() : "");
+        nothingRl.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onResponse(String response) {
-        Log.d(TAG,response);
+        Log.d(TAG, response);
+        restaurants = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(response);
-            for(int i = 0; i < jsonArray.length(); i++)
+            for (int i = 0; i < jsonArray.length(); i++) {
                 restaurants.add(new Restaurant(jsonArray.getJSONObject(i)));
+            }
             adapter.setRestaurants(restaurants);
         } catch (JSONException e) {
-            Log.e(TAG,e.getMessage());
+            Log.e(TAG, e.getMessage());
+            restaurantRV.setVisibility(View.GONE);
+            loadingPanel.setVisibility(View.GONE);
+            nothingRl.setVisibility(View.VISIBLE);
         }
-        loadingPanel.setVisibility(View.GONE);
-        restaurantRV.setVisibility(View.VISIBLE);
+
+        if (CollectionUtils.isNotEmpty(restaurants)) {
+            nothingRl.setVisibility(View.GONE);
+            loadingPanel.setVisibility(View.GONE);
+            restaurantRV.setVisibility(View.VISIBLE);
+        }
     }
 
 
